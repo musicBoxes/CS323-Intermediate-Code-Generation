@@ -46,7 +46,9 @@
 	
 	struct FieldList* curFunc;
 	
+	// array 
 	char *varName; // record variable name when it is defined
+	int varCnt = 1; // record variable name when it is defined
 	
 	Type *baseType;
 	Type *arrayType; 
@@ -175,6 +177,7 @@ VarDec: ID {
 			array->base = lastArrayType;
 		}
 		array->size = strToInt($3->value+5); // "INT: "
+		varCnt *= array->size;
 		arrayType->category = ARRAY;
 		arrayType->array = array;
 	}
@@ -562,7 +565,14 @@ int addVar(FieldList* head, struct treeNode* node, int lineno){
 	//newVar->type = baseType;
 	newVar->type = (arrayType != NULL) ? arrayType : baseType ;
 	list_pushBack(head, newVar);
+	
+	if (baseType == &INT_TYPE){
+		TAC_Dec(spl_instruction+instruction_cnt, varName, 4*varCnt);
+		instruction_cnt++;
+	}
+	
 	arrayType = NULL; // reset it
+	varCnt = 1;
 	return 0;
 }
 

@@ -97,7 +97,7 @@ void TAC_Return(TAC *tac, char *x){
 	strcpy(tac->seg[1], x);
 }
 // DEC x [size] | allocate space pointed by x, size must be a multiple of 4
-void TAC_Alloc(TAC *tac, char *x, int bytes){
+void TAC_Dec(TAC *tac, char *x, int bytes){
 	strcpy(tac->seg[0], "DEC");
 	strcpy(tac->seg[1], x);
 	sprintf(tac->seg[2], "[%d]", bytes);
