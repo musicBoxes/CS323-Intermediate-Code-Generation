@@ -9,6 +9,9 @@ splc:
 	$(CC) -w syntax.tab.c -lfl -ly -o bin/splc
 	touch bin/splc
 	@chmod +x bin/splc
+debug:
+	./bin/splc debug.spl
+	cat -n debug.out
 clean:
 	@rm -rf bin/
 	@rm -rf syntax.tab.*

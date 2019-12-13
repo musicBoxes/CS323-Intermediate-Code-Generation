@@ -8,10 +8,19 @@
 	#include "lex.yy.c"
 	#endif
 	
+	#include "instruction.h"
+	
 	int childNum;
 	int error_flag = 0;
-	int loop_flag = 0;
 	char errmsg[100];
+	
+	int loop_flag = 0;
+	
+	// used in IR
+	int cntIdx = 0;
+	TAC spl_instruction[1024];
+	int instruction_cnt = 0;
+	const char *interVar = "dyj";
 	
 	// temporary store child node
 	struct treeNode* childNodeList[10];
@@ -178,8 +187,8 @@ FunDec: ID LP VarList RP {
 		curFunc = list_getLast(funcList);
 		curFunc->args = (FieldList*)malloc(sizeof(FieldList)); memset(curFunc->args, 0, sizeof(FieldList));
 		list_link(curFunc->args, tmpList);
-		//printf("FunDec -> ID LP VarList RP\n");
-		//FieldListToString(curFunc->args);
+		TAC_Function(spl_instruction+instruction_cnt, $1->value+4); //"ID: "
+		instruction_cnt ++;
 	}
     | ID LP RP { 
 		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "FunDec", @$.first_line); 
@@ -187,6 +196,8 @@ FunDec: ID LP VarList RP {
 		//printf("FunDec -> ID LP RP\n");
 		curFunc = list_getLast(funcList);
 		curFunc->args = NULL;
+		TAC_Function(spl_instruction+instruction_cnt, $1->value+4); //"ID: "
+		instruction_cnt ++;
 	}
     | ID LP error { printf("Error type B at Line %d: Missing \")\"\n", @$.first_line); error_flag = 1; }
 	;
@@ -222,6 +233,8 @@ Stmt: Exp SEMI { childNum = 2; childNodeList[0]=$1; childNodeList[1]=$2; $$=crea
 		ret->lineno = @2.first_line;
 		ret->type = getExpTypePtr($2, @2.first_line);
 		list_pushBack(retList, ret);
+		TAC_Return(spl_instruction+instruction_cnt, $2->expVal);
+		instruction_cnt ++;
 	}
     | IF LP Exp RP Stmt { 
 		childNum = 5; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; childNodeList[3]=$4; childNodeList[4]=$5; $$=createNode(childNum, childNodeList, "Stmt", @$.first_line); 
@@ -327,12 +340,26 @@ Exp: Exp ASSIGN Exp {
     | Exp GE Exp { childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); }
     | Exp NE Exp { childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); }
     | Exp EQ Exp { childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); }
-    | Exp PLUS Exp { childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); }
-    | Exp MINUS Exp { childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); }
-    | Exp MUL Exp { childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); }
-    | Exp DIV Exp { childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); }
-    | LP Exp RP { childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); }
-    | MINUS Exp { childNum = 2; childNodeList[0]=$1; childNodeList[1]=$2; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); }
+    | Exp PLUS Exp { 
+		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); 
+		TAC_Add(spl_instruction+instruction_cnt, interVar, $1->expVal, $3->expVal);
+		instruction_cnt ++;
+	}
+    | Exp MINUS Exp { 
+		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); 
+	}
+    | Exp MUL Exp { 
+		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); 
+	}
+    | Exp DIV Exp {
+		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); 
+	}
+    | LP Exp RP { 
+		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); 
+	}
+    | MINUS Exp { 
+		childNum = 2; childNodeList[0]=$1; childNodeList[1]=$2; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); 
+	}
     | NOT Exp { childNum = 2; childNodeList[0]=$1; childNodeList[1]=$2; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); }
     | ID LP Args RP { 
 		childNum = 4; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; childNodeList[3]=$4; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); 
@@ -390,8 +417,12 @@ Exp: Exp ASSIGN Exp {
 			error_flag = 1;
 			printf("Error type 1 at Line %d: Variable '%s' is not defined\n", @$.first_line, $1->value+4);
 		}
+		strcpy($$->expVal, $1->value+4);
 	}
-    | INT { childNum = 1; childNodeList[0]=$1; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); }
+    | INT { 
+		childNum = 1; childNodeList[0]=$1; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); 
+		sprintf($$->expVal, "#%s", $1->value+5); // "INT: "
+	}
     | FLOAT { childNum = 1; childNodeList[0]=$1; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); }
     | CHAR { childNum = 1; childNodeList[0]=$1; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); }
     | ID LP Args error { printf("Error type B at Line %d: Missing \")\"\n", @$.first_line); error_flag = 1; }
@@ -739,15 +770,10 @@ int main(int argc, char** args){
 	
 	//printf("Parsing...\n");
     yyparse();
-	//#define DEBUG
-	#ifdef DEBUG
-	printf("Variable List\n");
-	//FieldListToString();
-	printf("Function List\n");
-	FieldListToString(funcList);
-	printf("Struct List\n");
-	FieldListToString(structList);
-	#endif
+	printf("%d\n", instruction_cnt);
+	for (int i = 0 ; i < instruction_cnt ; i ++){
+		printTAC(spl_instruction+i); printf("\n");
+	}
 	
 	fclose(stdin);
 	fclose(stdout);

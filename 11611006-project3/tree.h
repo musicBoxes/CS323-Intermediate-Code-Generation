@@ -9,6 +9,8 @@ struct treeNode
 	char *value;
 	int childNum;
 	struct treeNode *child[10];
+	
+	char* expVal[16];
 };
 
 struct treeNode *createLeaf(char *text);
