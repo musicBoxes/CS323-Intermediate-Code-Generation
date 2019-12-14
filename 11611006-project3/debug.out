@@ -1,10 +1,7 @@
-write
-Stmt -> Exp SEMI
-syntax error
-Stmt -> Exp SEMI
-4
 FUNCTION main :
-IF #1 < #2 GOTO
-GOTO
+IF #1 < #2 GOTO label0
+GOTO label1
+LABEL label0 :
 WRITE error
-error_flag = 1
+LABEL label1 :
+RETURN #0

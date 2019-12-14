@@ -78,14 +78,21 @@
 %token DOT SEMI COMMA ASSIGN LT LE GT GE NE EQ 
 %token PLUS MINUS MUL DIV AND OR NOT LP RP LB RB LC RC 
 %token CS CE
-%token SPACE
-%right ASSIGN NOT
-%left OR AND LT LE GT GE EQ NE PLUS MINUS MUL DIV DOT LB RB LP RP
+%token UMINUS
+%right ASSIGN
+%left OR 
+%left AND 
+%left LT LE GT GE EQ NE 
+%left PLUS MINUS 
+%left UMINUS
+%left MUL DIV
+%right NOT
+%left DOT LB RB LP RP
 %%
 Program: ExtDefList { 
 		childNum = 1; childNodeList[0]=$1; $$=createNode(childNum, childNodeList, "Program", @$.first_line); 
 		//if (!error_flag) 
-			treePrint($$); 
+		//	treePrint($$); 
 	}
     ;
 ExtDefList: ExtDef ExtDefList { childNum = 2; childNodeList[0]=$1; childNodeList[1]=$2; $$=createNode(childNum, childNodeList, "ExtDefList", @$.first_line); }
@@ -219,7 +226,7 @@ CompSt: LC DefList StmtList RC {
 		list_deleteLast(allTmpVarList);
 	}
 	| LC DefList StmtList error { printf("Error type B at Line %d: Missing \"}\"\n", @$.first_line); error_flag = 1; }
-	| LC DefList StmtList Def StmtList DefStmtList RC { printf("Error type B at Line %d: Definition must at head.\n", @4.first_line); error_flag = 1; }
+//	| LC DefList StmtList Def StmtList DefStmtList RC { printf("Error type B at Line %d: Definition must at head.\n", @4.first_line); error_flag = 1; }
 	;
 DefStmtList: Def StmtList
 	| %empty
@@ -230,10 +237,10 @@ StmtList: Stmt StmtList { childNum = 2; childNodeList[0]=$1; childNodeList[1]=$2
     ;
 Stmt: Exp SEMI { 
 		childNum = 2; childNodeList[0]=$1; childNodeList[1]=$2; $$=createNode(childNum, childNodeList, "Stmt", @$.first_line); 
-		printf("Stmt -> Exp SEMI\n");
+		//printf("Stmt -> Exp SEMI\n");
 	}
     | CompSt { 
-		printf("Stmt -> CompSt\n");
+		//printf("Stmt -> CompSt\n");
 		childNum = 1; childNodeList[0]=$1; $$=createNode(childNum, childNodeList, "Stmt", @$.first_line); 
 	}
     | RETURN Exp SEMI { 
@@ -244,9 +251,9 @@ Stmt: Exp SEMI {
 		list_pushBack(retList, ret);
 		TAC_Return(spl_instruction+instruction_cnt, $2->expVal); instruction_cnt ++;
 	}
-    | IF LP Exp RP M Stmt M{ 
+    | IF LP Exp RP M Stmt M { 
 		childNum = 5; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; childNodeList[3]=$4; childNodeList[4]=$6; $$=createNode(childNum, childNodeList, "Stmt", @$.first_line); 
-		printf("IF LP Exp RP M Stmt M\n");
+		//printf("IF LP Exp RP M Stmt M\n");
 		Type *typePtr = getExpTypePtr($3, @3.first_line);
 		if (!(typePtr->category == PRIMITIVE && typePtr->primitive == INT)){
 			error_flag = 1;
@@ -254,10 +261,11 @@ Stmt: Exp SEMI {
 		}
 		else{
 			//printf("IF LP Exp RP M Stmt M\n");
-			//backPatch($3->trueList, $5->inst);
+			backPatch($3->trueList, $5->inst);
+			backPatch($3->falseList, $7->inst);
 		}
 	}
-    | IF LP Exp RP Stmt ELSE Stmt { 
+    | IF LP Exp RP M Stmt ELSE M Stmt { 
 		childNum = 7; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; childNodeList[3]=$4; childNodeList[4]=$5; childNodeList[5]=$6; childNodeList[6]=$7; $$=createNode(childNum, childNodeList, "Stmt", @$.first_line); 
 		Type *typePtr = getExpTypePtr($3, @3.first_line);
 		if (!(typePtr->category == PRIMITIVE && typePtr->primitive == INT)){
@@ -396,7 +404,7 @@ Exp: Exp ASSIGN Exp {
     | LP Exp RP { 
 		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); 
 	}
-    | MINUS Exp { 
+    | MINUS Exp %prec UMINUS{ 
 		childNum = 2; childNodeList[0]=$1; childNodeList[1]=$2; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); 
 	}
     | NOT Exp { childNum = 2; childNodeList[0]=$1; childNodeList[1]=$2; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); }
@@ -441,7 +449,7 @@ Exp: Exp ASSIGN Exp {
 			printf("Error type 9 at Line %d: Function’s arguments mismatch the declared parameters\n", @3.first_line);
 			goto clearArg;
 		}
-		printf("%s\n", func->name);
+		//printf("%s\n", func->name);
 		if (!strcmp(func->name, "write")) {
 			TAC_Write(spl_instruction+instruction_cnt, "error"); instruction_cnt ++;
 			goto clearArg;
@@ -513,10 +521,10 @@ Args: Exp COMMA Args {
 	
 M: %empty { 
 		$$=createNode(0, childNodeList, "M", @$.first_line); 
-		$$->inst = instruction_cnt; /*
-		char label[8];
+		$$->inst = instruction_cnt; 
+		char label[8]; memset(label, 0, sizeof(label));
 		sprintf(label, "label%d", label_idx++);
-		TAC_Label(spl_instruction+instruction_cnt, label); instruction_cnt ++;*/
+		TAC_Label(spl_instruction+instruction_cnt, label); instruction_cnt ++;
 	}
 	;
 %%
@@ -809,16 +817,19 @@ Type* parseSpecifier(struct treeNode* node){
 }
 
 void backPatch(int *list, int inst){
-	printf("backPatching...");
+	//printf("backPatching...\n");
 	int patchIdx;
 	while ((patchIdx = *list) != 0){
-		printf("patchIdx = %d\n", patchIdx);
+		//printf("patchIdx = %d\n", patchIdx);
+		//printf("Before patching\n"); printTAC(spl_instruction+patchIdx);
 		if (!strcmp(spl_instruction[patchIdx].seg[0], "IF")){
+			//printf("%s %s\n", spl_instruction[patchIdx].seg[5], spl_instruction[inst].seg[1]);
 			strcpy(spl_instruction[patchIdx].seg[5], spl_instruction[inst].seg[1]);
 		}
 		if (!strcmp(spl_instruction[patchIdx].seg[0], "GOTO")){
 			strcpy(spl_instruction[patchIdx].seg[1], spl_instruction[inst].seg[1]);
 		}
+		//printf("After patching\n"); printTAC(spl_instruction+patchIdx);
 		list ++;
 	}
 }
@@ -861,12 +872,12 @@ int main(int argc, char** args){
 	//printf("Parsing...\n");
     yyparse();
 	
-	printf("%d\n", instruction_cnt);
+	//printf("instruction_cnt = %d\n", instruction_cnt);
 	for (int i = 0 ; i < instruction_cnt ; i ++){
 		printTAC(spl_instruction+i); 
 	}
 	
-	printf("error_flag = %d\n", error_flag);
+	//printf("error_flag = %d\n", error_flag);
 	
 	fclose(stdin);
 	fclose(stdout);
