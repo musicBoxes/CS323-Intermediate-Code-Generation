@@ -7,21 +7,24 @@ typedef struct TAC{
 
 void printTAC(TAC *tac){
 	int idx = 0;
+	printf("%s", tac->seg[idx++]);
 	while (tac->seg[idx][0] != 0) {
-		printf("%s ", tac->seg[idx]);
-		idx++;
+		printf(" %s", tac->seg[idx++]);
 	}
+	printf("\n");
 }
 
 // LABEL x : | define a label x
 void TAC_Label(TAC *tac, char *x){
 	strcpy(tac->seg[0], "LABEL");
 	strcpy(tac->seg[1], x);
+	strcpy(tac->seg[2], ":");
 }
 // FUNCTION f : | define a function f
 void TAC_Function(TAC *tac, char *f){
 	strcpy(tac->seg[0], "FUNCTION");
 	strcpy(tac->seg[1], f);
+	strcpy(tac->seg[2], ":");
 }
 // x := y | assign value of y to x
 void TAC_Assign(TAC *tac, char *x, char *y){
@@ -82,6 +85,11 @@ void TAC_AssignToAddr(TAC *tac, char *x, char *y){
 	strcpy(tac->seg[1], ":=");
 	strcpy(tac->seg[2], y);
 }
+// GOTO x | unconditional jump to label x
+void TAC_Goto(TAC *tac, char *x){
+	strcpy(tac->seg[0], "GOTO");
+	strcpy(tac->seg[1], x);
+}
 // IF x [relop] y GOTO z | if the condition (binary boolean) is true, jump to label z
 void TAC_If(TAC *tac, char *x, char *relop, char *y, char *z){
 	strcpy(tac->seg[0], "IF");
@@ -100,7 +108,7 @@ void TAC_Return(TAC *tac, char *x){
 void TAC_Dec(TAC *tac, char *x, int bytes){
 	strcpy(tac->seg[0], "DEC");
 	strcpy(tac->seg[1], x);
-	sprintf(tac->seg[2], "[%d]", bytes);
+	sprintf(tac->seg[2], "%d", bytes);
 }
 // PARAM x | declare a function parameter
 void TAC_Param(TAC *tac, char *x){

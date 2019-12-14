@@ -1,5 +1,10 @@
+write
+Stmt -> Exp SEMI
+syntax error
+Stmt -> Exp SEMI
 4
-FUNCTION main 
-dyj := #5 + #5 
-DEC a [4] 
-RETURN #0 
+FUNCTION main :
+IF #1 < #2 GOTO
+GOTO
+WRITE error
+error_flag = 1

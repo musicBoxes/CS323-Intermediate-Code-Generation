@@ -82,7 +82,8 @@ extern int yydebug;
     LC = 292,
     RC = 293,
     CS = 294,
-    CE = 295
+    CE = 295,
+    SPACE = 296
   };
 #endif
 

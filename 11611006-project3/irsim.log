@@ -1,0 +1,8 @@
+[DEBUG] 2019-12-14 10:23:50,212 (irsim.py 577): Parsed arguments: {'irpath': 'debug.out', 'inputs': '', 'logpath': 'irsim.log'}
+[DEBUG] 2019-12-14 10:23:50,212 (irsim.py 538): unsupported input: 
+[INFO] 2019-12-14 10:23:50,215 (irsim.py 541): File loaded successfully
+[INFO] 2019-12-14 10:24:17,746 (irsim.py 541): KeyboardInterrupt raised, quit program
+[DEBUG] 2019-12-14 10:25:01,326 (irsim.py 577): Parsed arguments: {'irpath': 'debug.out', 'inputs': '', 'logpath': 'irsim.log'}
+[DEBUG] 2019-12-14 10:25:01,326 (irsim.py 538): unsupported input: 
+[INFO] 2019-12-14 10:25:01,327 (irsim.py 541): File loaded successfully
+[INFO] 2019-12-14 10:25:02,845 (irsim.py 541): KeyboardInterrupt raised, quit program

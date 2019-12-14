@@ -1,5 +1,6 @@
 %{
 	#include"tree.h"
+	#include"instruction.h"
 	#define YYSTYPE struct treeNode*
 	#include"syntax.tab.h"
     // just let you know you have macros!
@@ -77,7 +78,7 @@ void { yylval = createLeaf("VOID"); return VOID; }
 \} { yylval = createLeaf("RC"); return RC; }
 \/\* { return CS; }
 \*\/ { return CE; }
-[ \r\t]+ {  }
+[ \r\t]+ { }
 [\n] { yycolno = 1; }
 [^ \n\r\t\(\)\.\{\};,!&\*\[\]\|\<>=\+-]* { printf("Error type A at line %d: Unknown lexeme \"%s\" \n", yylineno, yytext); error_flag = 1; }
 . { printf("Error type A at Line %d: Unknown characters %s\n", yylineno, yytext); }

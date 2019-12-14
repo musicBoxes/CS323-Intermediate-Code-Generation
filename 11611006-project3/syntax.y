@@ -17,10 +17,12 @@
 	int loop_flag = 0;
 	
 	// used in IR
-	int cntIdx = 0;
+	int label_idx = 0;
 	TAC spl_instruction[1024];
 	int instruction_cnt = 0;
 	const char *interVar = "dyj";
+	const char *interAddVar = "dyj_add";
+	const char *interMulVar = "dyj_mul";
 	
 	// temporary store child node
 	struct treeNode* childNodeList[10];
@@ -59,33 +61,35 @@
 	FieldList* validDecDefVar(char *name);
 	FieldList* validUseVar(char *name);
 	
-	FieldList* varExist(char *name);
-	
 	// return 0 if variable add successfully
 	// return 1 means error
 	int addVar(FieldList*, struct treeNode*, int);
-	int addFuncStruct(FieldList* head, struct treeNode* node, Type *type, int lineno);
+	int addFuncStruct(FieldList* head, char* funcName, Type *type, int lineno);
 	
 	Type* isValidAssign(struct treeNode *a, struct treeNode *b, int lineno);
 	Type* isValidOperation(struct treeNode *a, struct treeNode *b, char *operation, int lineno);
 	Type* getExpTypePtr(struct treeNode* node, int lineno);
 	Type* parseSpecifier(struct treeNode* node);
+	
+	void backPatch(int *list, int inst);
 %}
 %token TYPE ID CHAR FLOAT INT VOID
 %token STRUCT IF ELSE WHILE FOR RETURN BREAK
 %token DOT SEMI COMMA ASSIGN LT LE GT GE NE EQ 
 %token PLUS MINUS MUL DIV AND OR NOT LP RP LB RB LC RC 
 %token CS CE
+%token SPACE
 %right ASSIGN NOT
 %left OR AND LT LE GT GE EQ NE PLUS MINUS MUL DIV DOT LB RB LP RP
 %%
 Program: ExtDefList { 
 		childNum = 1; childNodeList[0]=$1; $$=createNode(childNum, childNodeList, "Program", @$.first_line); 
-		//if (!error_flag) treePrint($$); 
+		//if (!error_flag) 
+			treePrint($$); 
 	}
     ;
 ExtDefList: ExtDef ExtDefList { childNum = 2; childNodeList[0]=$1; childNodeList[1]=$2; $$=createNode(childNum, childNodeList, "ExtDefList", @$.first_line); }
-    |  { $$=createEmpty(); }
+    | %empty { $$=createEmpty(); }
     ;
 ExtDef: Specifier ExtDecList SEMI { 
 		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "ExtDef", @$.first_line); 
@@ -145,7 +149,7 @@ StructSpecifier: STRUCT ID LC DefList RC {
 		baseType->structure = (FieldList*)malloc(sizeof(FieldList)); memset(baseType->structure, 0, sizeof(FieldList));
 		list_link(baseType->structure, list_getLast(allTmpVarList)->vars);
 		list_deleteLast(allTmpVarList);
-		addFuncStruct(structList, $2, baseType, @2.first_line);
+		addFuncStruct(structList, $2->value+4, baseType, @2.first_line); //"ID: "
 	}
     | STRUCT ID { 
 		childNum = 2; childNodeList[0]=$1; childNodeList[1]=$2; $$=createNode(childNum, childNodeList, "StructSpecifier", @$.first_line); 
@@ -186,21 +190,19 @@ FunDec: ID LP VarList RP {
 		childNum = 4; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; childNodeList[3]=$4; $$=createNode(childNum, childNodeList, "FunDec", @$.first_line); 
 		// we do not need to know function return type in here
 		// return type check will be done after FunDec be recognized
-		addFuncStruct(funcList, $1, NULL, @1.first_line);
+		addFuncStruct(funcList, $1->value+4, NULL, @1.first_line); // "ID: "
 		curFunc = list_getLast(funcList);
 		curFunc->args = (FieldList*)malloc(sizeof(FieldList)); memset(curFunc->args, 0, sizeof(FieldList));
 		list_link(curFunc->args, tmpList);
-		TAC_Function(spl_instruction+instruction_cnt, $1->value+4); //"ID: "
-		instruction_cnt ++;
+		TAC_Function(spl_instruction+instruction_cnt, $1->value+4); instruction_cnt ++; // "ID: "
 	}
     | ID LP RP { 
 		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "FunDec", @$.first_line); 
-		addFuncStruct(funcList, $1, NULL, @1.first_line);
+		addFuncStruct(funcList, $1->value+4, NULL, @1.first_line); // "ID: "
 		//printf("FunDec -> ID LP RP\n");
 		curFunc = list_getLast(funcList);
 		curFunc->args = NULL;
-		TAC_Function(spl_instruction+instruction_cnt, $1->value+4); //"ID: "
-		instruction_cnt ++;
+		TAC_Function(spl_instruction+instruction_cnt, $1->value+4); instruction_cnt ++; //"ID: "
 	}
     | ID LP error { printf("Error type B at Line %d: Missing \")\"\n", @$.first_line); error_flag = 1; }
 	;
@@ -220,14 +222,18 @@ CompSt: LC DefList StmtList RC {
 	| LC DefList StmtList Def StmtList DefStmtList RC { printf("Error type B at Line %d: Definition must at head.\n", @4.first_line); error_flag = 1; }
 	;
 DefStmtList: Def StmtList
-	|
+	| %empty
 	;
 StmtList: Stmt StmtList { childNum = 2; childNodeList[0]=$1; childNodeList[1]=$2; $$=createNode(childNum, childNodeList, "StmtList", @$.first_line); }
-    |  { $$=createEmpty(); }
+    | %empty { $$=createEmpty(); }
 //	| Def DefList { printf("Error type B at Line %d: Definition must at head.\n", @$.first_line); error_flag = 1; }
     ;
-Stmt: Exp SEMI { childNum = 2; childNodeList[0]=$1; childNodeList[1]=$2; $$=createNode(childNum, childNodeList, "Stmt", @$.first_line); }
+Stmt: Exp SEMI { 
+		childNum = 2; childNodeList[0]=$1; childNodeList[1]=$2; $$=createNode(childNum, childNodeList, "Stmt", @$.first_line); 
+		printf("Stmt -> Exp SEMI\n");
+	}
     | CompSt { 
+		printf("Stmt -> CompSt\n");
 		childNum = 1; childNodeList[0]=$1; $$=createNode(childNum, childNodeList, "Stmt", @$.first_line); 
 	}
     | RETURN Exp SEMI { 
@@ -236,15 +242,19 @@ Stmt: Exp SEMI { childNum = 2; childNodeList[0]=$1; childNodeList[1]=$2; $$=crea
 		ret->lineno = @2.first_line;
 		ret->type = getExpTypePtr($2, @2.first_line);
 		list_pushBack(retList, ret);
-		TAC_Return(spl_instruction+instruction_cnt, $2->expVal);
-		instruction_cnt ++;
+		TAC_Return(spl_instruction+instruction_cnt, $2->expVal); instruction_cnt ++;
 	}
-    | IF LP Exp RP Stmt { 
-		childNum = 5; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; childNodeList[3]=$4; childNodeList[4]=$5; $$=createNode(childNum, childNodeList, "Stmt", @$.first_line); 
+    | IF LP Exp RP M Stmt M{ 
+		childNum = 5; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; childNodeList[3]=$4; childNodeList[4]=$6; $$=createNode(childNum, childNodeList, "Stmt", @$.first_line); 
+		printf("IF LP Exp RP M Stmt M\n");
 		Type *typePtr = getExpTypePtr($3, @3.first_line);
 		if (!(typePtr->category == PRIMITIVE && typePtr->primitive == INT)){
 			error_flag = 1;
 			printf("Semantic Error at line %d: Use non-int type variable as condition.\n", @3.first_line);
+		}
+		else{
+			//printf("IF LP Exp RP M Stmt M\n");
+			//backPatch($3->trueList, $5->inst);
 		}
 	}
     | IF LP Exp RP Stmt ELSE Stmt { 
@@ -279,6 +289,7 @@ Stmt: Exp SEMI { childNum = 2; childNodeList[0]=$1; childNodeList[1]=$2; $$=crea
 		childNum = 2; childNodeList[0]=$1; childNodeList[1]=$2; $$=createNode(childNum, childNodeList, "Stmt", @$.first_line); 
 		//printf("loop flag = %d\n", loop_flag);
 		if (!loop_flag) {
+			error_flag = 1;
 			printf("Semantic Error at line %d: 'break' should be used in loop.\n", @1.first_line);
 		}
 	}
@@ -286,7 +297,7 @@ Stmt: Exp SEMI { childNum = 2; childNodeList[0]=$1; childNodeList[1]=$2; $$=crea
 DefList: Def DefList { 
 		childNum = 2; childNodeList[0]=$1; childNodeList[1]=$2; $$=createNode(childNum, childNodeList, "DefList", @$.first_line); 
 	}
-    |  { 
+    | %empty { 
 		$$=createEmpty(); 
 		FieldList* varDefList = (FieldList*)malloc(sizeof(FieldList)); memset(varDefList, 0, sizeof(FieldList));
 		varDefList->vars = (FieldList*)malloc(sizeof(FieldList)); memset(varDefList->vars, 0, sizeof(FieldList));
@@ -315,11 +326,13 @@ Dec: VarDec {
 				error_flag = 1;
 				printf("Error type 5 at Line %d: unmatching type on both sides of assignment\n", @2.first_line);
 			}
+			TAC_Assign(spl_instruction+instruction_cnt, varName, interVar); instruction_cnt ++;
 		}
 	}
 //	| VarDec ASSIGN error { printf("Error type B at Line %d: VarDec ASSIGN error\n", @$.first_line); error_flag = 1; }
 	;
 Exp: Exp ASSIGN Exp { 
+		printf("Exp -> Exp ASSIGN Exp\n");
 		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); 
 		Type *typePtr = isValidAssign($1, $3, @2.first_line);
 		if (typePtr->category == DIFFERENT) {
@@ -334,28 +347,51 @@ Exp: Exp ASSIGN Exp {
 				printf("Error type 6 at Line %d: rvalue on the left side of assignment operator\n", @1.first_line);
 			}
 		}
+		TAC_Assign(spl_instruction+instruction_cnt, $1->expVal, $3->expVal); instruction_cnt ++;
 	}
-    | Exp AND Exp { childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); }
-    | Exp OR Exp { childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); }
-    | Exp LT Exp { childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); }
+    | Exp AND M Exp { 
+		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$4; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); 
+	}
+    | Exp OR M Exp { 
+		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$4; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); 
+	}
+    | Exp LT Exp { 
+		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); 
+		$$->trueList[0] = instruction_cnt;
+		$$->falseList[0] = instruction_cnt+1;
+		TAC_If(spl_instruction+instruction_cnt, $1->expVal, "<", $3->expVal, ""); instruction_cnt ++;// "" need to be backpatch
+		TAC_Goto(spl_instruction+instruction_cnt, ""); instruction_cnt ++;
+	}
     | Exp LE Exp { childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); }
     | Exp GT Exp { childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); }
     | Exp GE Exp { childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); }
-    | Exp NE Exp { childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); }
+    | Exp NE Exp { 
+		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); 
+		$$->trueList[0] = instruction_cnt;
+		$$->falseList[0] = instruction_cnt+1;
+		TAC_If(spl_instruction+instruction_cnt, $1->expVal, "!=", $3->expVal, ""); instruction_cnt ++;// "" need to be backpatch
+		TAC_Goto(spl_instruction+instruction_cnt, ""); instruction_cnt ++;
+	}
     | Exp EQ Exp { childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); }
     | Exp PLUS Exp { 
 		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); 
-		TAC_Add(spl_instruction+instruction_cnt, interVar, $1->expVal, $3->expVal);
-		instruction_cnt ++;
+		TAC_Add(spl_instruction+instruction_cnt, interVar, $1->expVal, $3->expVal); instruction_cnt ++;
+		strcpy($$->expVal, interVar);
 	}
     | Exp MINUS Exp { 
 		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); 
+		TAC_Sub(spl_instruction+instruction_cnt, interVar, $1->expVal, $3->expVal); instruction_cnt ++;
+		strcpy($$->expVal, interVar);
 	}
     | Exp MUL Exp { 
 		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); 
+		TAC_Mul(spl_instruction+instruction_cnt, interVar, $1->expVal, $3->expVal); instruction_cnt ++;
+		strcpy($$->expVal, interVar);
 	}
     | Exp DIV Exp {
 		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); 
+		TAC_Div(spl_instruction+instruction_cnt, interVar, $1->expVal, $3->expVal); instruction_cnt ++;
+		strcpy($$->expVal, interVar);
 	}
     | LP Exp RP { 
 		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); 
@@ -376,28 +412,41 @@ Exp: Exp ASSIGN Exp {
 			else{
 				printf("Error type 2 at Line %d: Function '%s' is invoked without definition\n", @1.first_line, $1->value+4);
 			}
+			goto clearArg;
 		}
-		else{
-			FieldList *cur1 = func->args->next, *cur2 = funcArgs->next;
-			int ok = 1;
-			FieldList *p1 = cur1, *p2 = cur2;
-			/*int cnt1 = 0, cnt2 = 0;
-			while (p1 != NULL) cnt1 ++, p1 = p1->next;
-			while (p2 != NULL) cnt2 ++, p2 = p2->next;
-			printf("len1 = %d len2 = %d\n", cnt1, cnt2);*/
-			//printf("Size %d %d\n", list_size(func->args), list_size(funcArgs));
-			while (cur1 != NULL && cur2 != NULL){
-				if (!isSameType(cur1->type, cur2->type)){
-					ok = 0;
-					break;
-				}
-				cur1 = cur1->next;
-				cur2 = cur2->next;
-			}
-			if (!ok || (cur1 == NULL && cur2 != NULL) || (cur1 != NULL && cur2 == NULL)){
-				printf("Error type 9 at Line %d: Function’s arguments mismatch the declared parameters\n", @3.first_line);
-			}
+		//printf("%d\n", func->args);
+		if (func->args == NULL){
+			error_flag = 1;
+			printf("Error type 9 at Line %d: Function’s arguments mismatch the declared parameters\n", @3.first_line);
+			goto clearArg;
 		}
+		FieldList *cur1 = func->args->next;
+		FieldList *cur2 = funcArgs->next;
+		int ok = 1;
+		//FieldList *p1 = cur1, *p2 = cur2;
+		//int cnt1 = 0, cnt2 = 0;
+		//while (p1 != NULL) cnt1 ++, p1 = p1->next;
+		//while (p2 != NULL) cnt2 ++, p2 = p2->next;
+		//printf("len1 = %d len2 = %d\n", cnt1, cnt2);
+		//printf("Size %d %d\n", list_size(func->args), list_size(funcArgs));
+		while (cur1 != NULL && cur2 != NULL){
+			if (!isSameType(cur1->type, cur2->type)){
+				ok = 0;
+				break;
+			}
+			cur1 = cur1->next;
+			cur2 = cur2->next;
+		}
+		if (!ok || (cur1 == NULL && cur2 != NULL) || (cur1 != NULL && cur2 == NULL)){
+			printf("Error type 9 at Line %d: Function’s arguments mismatch the declared parameters\n", @3.first_line);
+			goto clearArg;
+		}
+		printf("%s\n", func->name);
+		if (!strcmp(func->name, "write")) {
+			TAC_Write(spl_instruction+instruction_cnt, "error"); instruction_cnt ++;
+			goto clearArg;
+		}
+		clearArg:
 		list_clear(funcArgs);
 	}
     | ID LP RP { 
@@ -409,6 +458,14 @@ Exp: Exp ASSIGN Exp {
 			}
 			else{
 				printf("Error type 2 at Line %d: Function '%s' is invoked without definition\n", @1.first_line, $1->value+4);
+			}
+		}
+		else{
+			if (!strcmp($1->value+4, "read")){ // "ID: " read()
+				TAC_Read(spl_instruction+instruction_cnt, interVar); instruction_cnt++;
+			}
+			else{ // other function
+				TAC_Call(spl_instruction+instruction_cnt, interVar, $1->value+4); instruction_cnt++; // "ID: "
 			}
 		}
 	}
@@ -436,7 +493,7 @@ ExpList: Exp { childNum = 1; childNodeList[0]=$1; $$=createNode(childNum, childN
 	| Exp COMMA ExpList { childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "ExpList", @$.first_line); }
 	;
 ExpListEx: ExpList { $$=$1; }
-	| { $$ = createEmpty(); }
+	| %empty { $$ = createEmpty(); }
 	;
 Args: Exp COMMA Args { 
 		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Args", @$.first_line); 
@@ -453,10 +510,19 @@ Args: Exp COMMA Args {
 		list_pushBack(funcArgs, arg);
 	}
     ;
+	
+M: %empty { 
+		$$=createNode(0, childNodeList, "M", @$.first_line); 
+		$$->inst = instruction_cnt; /*
+		char label[8];
+		sprintf(label, "label%d", label_idx++);
+		TAC_Label(spl_instruction+instruction_cnt, label); instruction_cnt ++;*/
+	}
+	;
 %%
 
 void yyerror(char* s){
-	//printf("%s\n", s);
+	printf("%s\n", s);
 }
 
 char* TypeToString(Type *type){
@@ -538,20 +604,6 @@ FieldList* validUseVar(char *name){
 	return NULL;
 }
 
-FieldList* varExist(char *name){
-	FieldList* var;
-	var = list_findByName(list_getLast(allTmpVarList)->vars, name);
-	if (var != NULL) 
-		return var;
-	var = list_findByName(tmpList, name);
-	if (var != NULL) 
-		return var;
-	var = list_getLast(funcList);
-	if (var != NULL)
-		return list_findByName(var->args, name);
-	return NULL;
-}
-
 int addVar(FieldList* head, struct treeNode* node, int lineno){
 	// "ID: "
 	if (validDecDefVar(varName) != NULL)
@@ -563,34 +615,39 @@ int addVar(FieldList* head, struct treeNode* node, int lineno){
 	FieldList* newVar = (FieldList*)malloc(sizeof(FieldList)); memset(newVar, 0, sizeof(FieldList));
 	strcpy(newVar->name, varName);
 	//newVar->type = baseType;
-	newVar->type = (arrayType != NULL) ? arrayType : baseType ;
-	list_pushBack(head, newVar);
-	
-	if (baseType == &INT_TYPE){
-		TAC_Dec(spl_instruction+instruction_cnt, varName, 4*varCnt);
-		instruction_cnt++;
+	if (arrayType == NULL){ // not array
+		newVar->type = baseType;
 	}
+	else {
+		newVar->type = arrayType;
+		// assign space to array
+		if (baseType == &INT_TYPE){
+			TAC_Dec(spl_instruction+instruction_cnt, varName, 4*varCnt); instruction_cnt++;
+		}
+	}
+	//newVar->type = (arrayType != NULL) ? arrayType : baseType ;
+	list_pushBack(head, newVar);
 	
 	arrayType = NULL; // reset it
 	varCnt = 1;
 	return 0;
 }
 
-int addFuncStruct(FieldList* head, struct treeNode* node, Type *typePtr, int lineno){
+int addFuncStruct(FieldList* head, char* funcName, Type *typePtr, int lineno){
 	// "ID: "
-	if (list_findByName(head, node->value+4) != NULL){
+	if (list_findByName(head, funcName) != NULL){
 		error_flag = 1;
 		if (!strcmp(head->name, "function"))
-			printf("Error type 4 at Line %d: Function '%s' is redefined\n", lineno, node->value+4);
+			printf("Error type 4 at Line %d: Function '%s' is redefined\n", lineno, funcName);
 		if (!strcmp(head->name, "struct"))
-			printf("Error type 15 at Line %d: Redefine the same structure type(same name).\n", lineno, node->value+4);
+			printf("Error type 15 at Line %d: Redefine the same structure type(same name).\n", lineno, funcName);
 		return 1;
 	}
 	
 	FieldList* newItem = (FieldList*)malloc(sizeof(FieldList)); memset(newItem, 0, sizeof(FieldList));
 	
 	newItem->type = typePtr;
-	strcpy(newItem->name, node->value+4); // "ID: "
+	strcpy(newItem->name, funcName); // "ID: "
 	
 	list_pushBack(head, newItem);
 	
@@ -751,6 +808,21 @@ Type* parseSpecifier(struct treeNode* node){
 	return NULL;
 }
 
+void backPatch(int *list, int inst){
+	printf("backPatching...");
+	int patchIdx;
+	while ((patchIdx = *list) != 0){
+		printf("patchIdx = %d\n", patchIdx);
+		if (!strcmp(spl_instruction[patchIdx].seg[0], "IF")){
+			strcpy(spl_instruction[patchIdx].seg[5], spl_instruction[inst].seg[1]);
+		}
+		if (!strcmp(spl_instruction[patchIdx].seg[0], "GOTO")){
+			strcpy(spl_instruction[patchIdx].seg[1], spl_instruction[inst].seg[1]);
+		}
+		list ++;
+	}
+}
+
 int main(int argc, char** args){
 	//for (int i = 0 ; i < argc ; i ++)
 	//	printf("%d %s\n", i, args[i]);
@@ -778,12 +850,23 @@ int main(int argc, char** args){
 	
 	structList = list_init(); strcpy(structList->name, "struct");
 	
+	addFuncStruct(funcList, "read", &INT_TYPE, 0);
+	addFuncStruct(funcList, "write", &INT_TYPE, 0);
+	FieldList* arg = (FieldList*)malloc(sizeof(FieldList)); memset(arg, 0, sizeof(FieldList));
+	arg->type = &INT_TYPE;
+	FieldList* curFunc = list_getLast(funcList);
+	curFunc->args = (FieldList*)malloc(sizeof(FieldList));
+	list_pushBack(curFunc->args, arg); 
+	
 	//printf("Parsing...\n");
     yyparse();
+	
 	printf("%d\n", instruction_cnt);
 	for (int i = 0 ; i < instruction_cnt ; i ++){
-		printTAC(spl_instruction+i); printf("\n");
+		printTAC(spl_instruction+i); 
 	}
+	
+	printf("error_flag = %d\n", error_flag);
 	
 	fclose(stdin);
 	fclose(stdout);

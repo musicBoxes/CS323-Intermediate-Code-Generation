@@ -10,7 +10,10 @@ struct treeNode
 	int childNum;
 	struct treeNode *child[10];
 	
-	char* expVal[16];
+	char expVal[16];
+	int trueList[16];
+	int falseList[16];
+	int inst;
 };
 
 struct treeNode *createLeaf(char *text);
@@ -44,6 +47,8 @@ struct treeNode *createNode(int childNum, struct treeNode *a[], char *value, int
 	sprintf(node->value, "%s (%d)", value, lineno);
 	for (int i = 0; i < node->childNum; i ++)
 		(node->child)[i] = a[i];
+	memset(node->trueList, 0, sizeof(node->trueList));
+	memset(node->falseList, 0, sizeof(node->falseList));
 	return node;
 }
  
