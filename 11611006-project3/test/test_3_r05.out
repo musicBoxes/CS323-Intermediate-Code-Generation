@@ -1,0 +1,14 @@
+FUNCTION foo :
+PARAM i
+PARAM j
+PARAM k
+dyj0 := i - j
+dyj1 := k * #2
+dyj2 := dyj0 + dyj1
+RETURN dyj2
+FUNCTION main :
+a := dyj
+b := dyj
+c := dyj
+c :=
+RETURN #0

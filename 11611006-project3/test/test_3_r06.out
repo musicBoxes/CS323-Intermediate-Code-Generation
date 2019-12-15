@@ -1,0 +1,21 @@
+FUNCTION hanoi :
+PARAM n
+PARAM p1
+PARAM p2
+PARAM p3
+IF n = #1 GOTO label0
+GOTO label1
+LABEL label0 :
+dyj0 := p1 * #1000000
+dyj1 := dyj0 + p3
+GOTO label2
+LABEL label1 :
+dyj2 := n - #1
+dyj3 := p1 * #1000000
+dyj4 := dyj3 + p3
+dyj5 := n - #1
+LABEL label2 :
+RETURN #0
+FUNCTION main :
+sum := dyj
+RETURN #0

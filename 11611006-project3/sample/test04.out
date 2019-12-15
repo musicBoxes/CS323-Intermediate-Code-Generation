@@ -1,0 +1,26 @@
+DEC temp 8
+FUNCTION add :
+PARAM temp
+dyj0 :=
+RETURN dyj0
+FUNCTION main :
+DEC op 8
+DEC r 8
+i := dyj
+j := dyj
+IF i < #2 GOTO
+GOTO
+IF j < #2 GOTO
+GOTO
+dyj1 := i + j
+ := dyj1
+dyj2 := j + #1
+j := dyj2
+ARG op
+dyj := CALL add
+ := dyj
+WRITE
+dyj3 := i + #1
+i := dyj3
+j := #0
+RETURN #0

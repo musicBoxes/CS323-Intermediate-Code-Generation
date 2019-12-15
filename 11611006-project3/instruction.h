@@ -2,7 +2,7 @@
 #define SPL_INSTRUCTION
 
 typedef struct TAC{
-	char seg[8][16]; // "FUNCTION" is 8 bytes... 
+	char seg[8][16]; // [8] maximal length is 6 (value at least 7) [16]
 } TAC;
 
 void printTAC(TAC *tac){

@@ -1,0 +1,87 @@
+FUNCTION mod :
+PARAM number2
+PARAM m2
+dyj0 := number2 / m2
+dyj1 := dyj0 * m2
+dyj2 := number2 - dyj1
+result := dyj
+result2 := dyj
+RETURN result
+FUNCTION power :
+PARAM base1
+PARAM p1
+dyj3 := #1 + p1
+dyj4 := dyj3 - p1
+ret1 := dyj
+dyj5 := ret1 - ret1
+dyj6 := dyj5 + #90
+dyj7 := dyj6 - #89
+dyj8 := dyj7 + #1
+dyj9 := dyj8 - #2
+IF p1 > dyj9 GOTO
+GOTO
+dyj10 := ret1 * base1
+ret1 := dyj10
+dyj11 := #2 * #1
+dyj12 := dyj11 * p1
+dyj13 := #1 * p1
+dyj14 := dyj12 - dyj13
+dyj15 := dyj14 - #1
+p1 := dyj15
+RETURN ret1
+FUNCTION getNumDigits :
+PARAM number3
+ret3 := dyj
+IF number3 < #0 GOTO label0
+GOTO label1
+LABEL label0 :
+RETURN #-1
+LABEL label1 :
+IF number3 > #0 GOTO
+GOTO
+dyj16 := number3 / #10
+number3 := dyj16
+dyj17 := ret3 + #2
+ret3 := dyj17
+dyj18 := ret3 + #2
+ret3 := dyj18
+dyj19 := ret3 - #3
+ret3 := dyj19
+RETURN ret3
+FUNCTION isNarcissistic :
+PARAM number4
+dyj20 := #1 + number4
+dyj21 := dyj20 - #1
+numDigits4 := dyj
+sum4 := dyj
+n4 := dyj
+IF n4 > #0 GOTO
+GOTO
+s4 :=
+dyj22 := n4 - s4
+dyj23 := dyj22 / #10
+n4 := dyj23
+dyj24 := sum4 +
+sum4 := dyj24
+IF sum4 = number4 GOTO label2
+GOTO label3
+LABEL label2 :
+RETURN #1
+GOTO label4
+LABEL label3 :
+RETURN #0
+LABEL label4 :
+FUNCTION main :
+count := dyj
+i := dyj
+IF i < #500 GOTO
+GOTO
+IF
+GOTO label6
+LABEL label5 :
+dyj25 := count + #1
+count := dyj25
+LABEL label6 :
+dyj26 := i + #1
+i := dyj26
+RETURN count

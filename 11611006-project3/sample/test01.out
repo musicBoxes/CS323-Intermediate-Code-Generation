@@ -1,0 +1,19 @@
+FUNCTION main :
+READ dyj
+n := dyj
+IF n > #0 GOTO label0
+GOTO label1
+LABEL label0 :
+WRITE #1
+GOTO label5
+LABEL label1 :
+IF n < #0 GOTO label2
+GOTO label3
+LABEL label2 :
+WRITE #-1
+GOTO label4
+LABEL label3 :
+WRITE #0
+LABEL label4 :
+LABEL label5 :
+RETURN #0

@@ -86,4 +86,10 @@ void treePrint(struct treeNode *node)
 {
 	treePrintLevel(node, 0);
 }
+
+void mergeList(int *dst, int *list1, int *list2){
+	int idx = 0;
+	while (*list1 != 0) dst[idx++] = *list1, list1 ++;
+	while (*list2 != 0) dst[idx++] = *list2, list2 ++;
+}
 #endif

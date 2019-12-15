@@ -1,7 +1,46 @@
+FUNCTION c :
+PARAM n
+PARAM m
+PARAM j
+PARAM k
+WRITE n
+dyj0 := n + m
+WRITE dyj0
+dyj1 := n + m
+dyj2 := dyj1 + j
+dyj3 := dyj2 + k
+WRITE dyj3
+RETURN #0
+FUNCTION d :
+PARAM n
+ARG n
+dyj := CALL d
+dyj4 := dyj * #0
+RETURN dyj4
+ARG n
+dyj := CALL d
+RETURN dyj
+FUNCTION e :
+dyj := CALL e
+RETURN
+dyj := CALL e
+dyj5 :=
+RETURN dyj5
 FUNCTION main :
-IF #1 < #2 GOTO label0
-GOTO label1
-LABEL label0 :
-WRITE error
-LABEL label1 :
+READ dyj
+b := dyj
+b := #2
+dyj6 := #2 * b
+dyj7 := b + dyj6
+dyj8 := b / #2
+dyj9 := dyj7 + dyj8
+b := dyj9
+dyj10 := b - #1
+ARG #4
+ARG #-3
+ARG #2
+ARG dyj10
+dyj := CALL c
+dyj11 := b * dyj
+b := dyj11
 RETURN #0

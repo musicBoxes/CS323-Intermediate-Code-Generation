@@ -1,0 +1,18 @@
+FUNCTION main :
+final := dyj
+a := #5
+dyj0 := a * a
+dyj1 := a + #2
+dyj2 := dyj0 * dyj1
+b := dyj2
+dyj3 := b / a
+dyj4 := dyj3 + #1
+c := dyj4
+dyj5 := a + b
+dyj6 := c * #3
+dyj7 := dyj5 - dyj6
+dyj8 := b / a
+dyj9 := dyj8 - #4
+dyj10 := dyj7 + dyj9
+final := dyj10
+RETURN #0

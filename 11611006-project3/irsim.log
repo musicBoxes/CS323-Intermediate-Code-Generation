@@ -1,8 +1,15 @@
-[DEBUG] 2019-12-14 10:23:50,212 (irsim.py 577): Parsed arguments: {'irpath': 'debug.out', 'inputs': '', 'logpath': 'irsim.log'}
-[DEBUG] 2019-12-14 10:23:50,212 (irsim.py 538): unsupported input: 
-[INFO] 2019-12-14 10:23:50,215 (irsim.py 541): File loaded successfully
-[INFO] 2019-12-14 10:24:17,746 (irsim.py 541): KeyboardInterrupt raised, quit program
-[DEBUG] 2019-12-14 10:25:01,326 (irsim.py 577): Parsed arguments: {'irpath': 'debug.out', 'inputs': '', 'logpath': 'irsim.log'}
-[DEBUG] 2019-12-14 10:25:01,326 (irsim.py 538): unsupported input: 
-[INFO] 2019-12-14 10:25:01,327 (irsim.py 541): File loaded successfully
-[INFO] 2019-12-14 10:25:02,845 (irsim.py 541): KeyboardInterrupt raised, quit program
+[DEBUG] 2019-12-15 10:47:55,552 (irsim.py 577): Parsed arguments: {'irpath': './test/test_3_r11.out', 'inputs': '', 'logpath': 'irsim.log'}
+[DEBUG] 2019-12-15 10:47:55,552 (irsim.py 538): unsupported input: 
+[DEBUG] 2019-12-15 10:53:18,845 (irsim.py 577): Parsed arguments: {'irpath': './test/test_3_r01.out', 'inputs': '', 'logpath': 'irsim.log'}
+[DEBUG] 2019-12-15 10:53:18,845 (irsim.py 538): unsupported input: 
+[INFO] 2019-12-15 10:53:18,849 (irsim.py 541): File loaded successfully
+[INFO] 2019-12-15 10:53:32,373 (irsim.py 541): Program has exited gracefully
+[INFO] 2019-12-15 10:53:32,373 (irsim.py 541): Total instructions = 21
+[WARNING] 2019-12-15 10:53:34,291 (irsim.py 544): Program Counter goes out of bound. The running program will be terminated instantly
+[INFO] 2019-12-15 10:53:36,327 (irsim.py 541): KeyboardInterrupt raised, quit program
+[DEBUG] 2019-12-15 10:58:37,319 (irsim.py 577): Parsed arguments: {'irpath': './test/test_3_r01.out', 'inputs': '', 'logpath': 'irsim.log'}
+[DEBUG] 2019-12-15 10:58:37,319 (irsim.py 538): unsupported input: 
+[INFO] 2019-12-15 10:58:37,321 (irsim.py 541): File loaded successfully
+[INFO] 2019-12-15 11:00:12,108 (irsim.py 541): Program has exited gracefully
+[INFO] 2019-12-15 11:00:12,108 (irsim.py 541): Total instructions = 21
+[INFO] 2019-12-15 11:02:17,188 (irsim.py 541): KeyboardInterrupt raised, quit program

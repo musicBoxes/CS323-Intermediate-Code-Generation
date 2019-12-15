@@ -1,0 +1,28 @@
+FUNCTION main :
+N := dyj
+num := dyj
+i := dyj
+k := dyj
+IF k <= N GOTO
+GOTO
+IF i <= k GOTO
+GOTO
+dyj0 := k / i
+dyj1 := dyj0 * i
+IF k = dyj1 GOTO label0
+GOTO label1
+LABEL label0 :
+dyj2 := num + #1
+num := dyj2
+LABEL label1 :
+dyj3 := i + #1
+i := dyj3
+IF num = #2 GOTO label2
+GOTO label3
+LABEL label2 :
+LABEL label3 :
+i := #1
+num := #0
+dyj4 := k + #1
+k := dyj4
+RETURN #0

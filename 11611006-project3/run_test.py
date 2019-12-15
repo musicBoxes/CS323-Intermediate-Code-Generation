@@ -30,15 +30,15 @@ def cpFile(fromPath, toPath):
     cmd = "cp " + fromPath + " " + toPath
     os.system(cmd)
 
-for i in range(1, 16):
+for i in range(1, 11):
     print(i)
-    cmd = "./bin/splc ./test/test_2_r%02d.spl"%(i)
+    cmd = "./bin/splc ./test/test_3_r%02d.spl"%(i)
     # print(cmd)
     os.system(cmd)
-    cmpFile("./test/test_2_r%02d.out"%i, "./test/test_2_r%02d.output.out"%i)
+    # cmpFile("./test/test_2_r%02d.out"%i, "./test/test_2_r%02d.output.out"%i)
     # cpFile("./test/test_2_r%02d.out"%i, "./test/test_2_r%02d.output.out"%i);
     
-    
+'''
 for i in range(1, 3):
     print(i)
     cmd = "./bin/splc ./test/test_2_o%02d.spl"%(i)
@@ -55,3 +55,4 @@ for i in range(1, 6):
     os.system(cmd)
     cmpFile("./test/self_test_%02d.out"%i, "./test/self_test_%02d.output.out"%i)
     # cpFile("./test/self_test_%02d.out"%i, "./test/self_test_%02d.output.out"%i);
+'''
