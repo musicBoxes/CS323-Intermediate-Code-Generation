@@ -1,0 +1,23 @@
+[DEBUG] 2019-12-15 23:35:32,202 (irsim.py 577): Parsed arguments: {'irpath': 'sample/test03.out', 'inputs': '', 'logpath': 'irsim.log'}
+[DEBUG] 2019-12-15 23:35:32,202 (irsim.py 538): unsupported input: 
+[INFO] 2019-12-15 23:35:32,206 (irsim.py 541): File loaded successfully
+[DEBUG] 2019-12-15 23:35:39,424 (irsim.py 620): Parsed arguments: {'irpath': 'sample/test03.out', 'inputs': '', 'logpath': 'irsim.log'}
+[INFO] 2019-12-15 23:35:39,425 (irsim.py 567): File loaded successfully
+[INFO] 2019-12-15 23:35:39,992 (irsim.py 567): Program has exited gracefully
+[INFO] 2019-12-15 23:35:39,992 (irsim.py 567): Total instructions = 15
+[INFO] 2019-12-15 23:35:47,157 (irsim.py 567): KeyboardInterrupt raised, quit program
+[DEBUG] 2019-12-15 23:35:48,110 (irsim.py 620): Parsed arguments: {'irpath': 'sample/test03.out', 'inputs': '', 'logpath': 'irsim.log'}
+[INFO] 2019-12-15 23:35:48,111 (irsim.py 567): File loaded successfully
+[INFO] 2019-12-15 23:36:13,651 (irsim.py 567): Program has exited gracefully
+[INFO] 2019-12-15 23:36:13,651 (irsim.py 567): Total instructions = 15
+[INFO] 2019-12-15 23:36:18,701 (irsim.py 567): Program has exited gracefully
+[INFO] 2019-12-15 23:36:18,702 (irsim.py 567): Total instructions = 30
+[INFO] 2019-12-15 23:36:21,846 (irsim.py 567): KeyboardInterrupt raised, quit program
+[DEBUG] 2019-12-15 23:37:33,499 (irsim.py 620): Parsed arguments: {'irpath': 'sample/test03.out', 'inputs': '', 'logpath': 'irsim.log'}
+[INFO] 2019-12-15 23:37:33,500 (irsim.py 567): File loaded successfully
+[INFO] 2019-12-15 23:40:08,168 (irsim.py 567): KeyboardInterrupt raised, quit program
+[DEBUG] 2019-12-15 23:40:46,194 (irsim.py 620): Parsed arguments: {'irpath': 'sample/test03.out', 'inputs': '', 'logpath': 'irsim.log'}
+[INFO] 2019-12-15 23:40:46,195 (irsim.py 567): File loaded successfully
+[INFO] 2019-12-15 23:40:46,929 (irsim.py 567): Program has exited gracefully
+[INFO] 2019-12-15 23:40:46,930 (irsim.py 567): Total instructions = 15
+[INFO] 2019-12-15 23:40:58,599 (irsim.py 567): KeyboardInterrupt raised, quit program

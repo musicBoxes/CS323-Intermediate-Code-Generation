@@ -464,6 +464,18 @@ Exp: Exp ASSIGN Exp {
     | Exp PLUS Exp { 
 		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); 
 		char tmpVar[8]; sprintf(tmpVar, "%s%d", interVar, inter_idx++);
+		char tmp[16]; 
+		memset(tmp, 0, sizeof(tmp));
+		if ($1->isAddr){
+			tmp[0] = '*';
+			strcpy(tmp+1, $1->expVal);
+			strcpy($1->expVal, tmp);
+		}
+		if ($3->isAddr){
+			tmp[0] = '*';
+			strcpy(tmp+1, $3->expVal);
+			strcpy($3->expVal, tmp);
+		}
 		TAC_Add(spl_instruction+instruction_cnt, tmpVar, $1->expVal, $3->expVal); instruction_cnt ++;
 		strcpy($$->expVal, tmpVar);
 	}
@@ -639,8 +651,8 @@ Exp: Exp ASSIGN Exp {
 				strcpy($$->expVal, $1->value+4);
 			}
 			else { // for other type, return its pointer
-				$$->expVal[0] = '&'; strcpy($$->expVal+1, $1->value+4);
-				//strcpy($$->expVal, $1->value+4); $$->isAddr = 1;
+				//$$->expVal[0] = '&'; strcpy($$->expVal+1, $1->value+4);
+				strcpy($$->expVal, $1->value+4); $$->isAddr = 1;
 			}
 		}
 	}
@@ -1021,7 +1033,7 @@ int main(int argc, char** args){
 	// output
 	char outputPath[256];
 	strcpy(outputPath, args[1]);
-	strcpy(outputPath+strlen(outputPath)-3, "out");
+	strcpy(outputPath+strlen(outputPath)-3, "ir");
 	//printf("OutputPath = %s\n", outputPath);
 	freopen(outputPath, "w", stdout);
 	
