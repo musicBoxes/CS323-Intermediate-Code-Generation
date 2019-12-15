@@ -1,0 +1,21 @@
+FUNCTION sqr :
+PARAM i1
+dyj0 := i1 * i1
+RETURN dyj0
+FUNCTION cbc :
+PARAM i2
+dyj1 := i2 * i2
+dyj2 := dyj1 * i2
+RETURN dyj2
+FUNCTION main :
+READ a
+WRITE a
+ARG a
+dyj := CALL sqr
+r := dyj
+WRITE r
+ARG a
+dyj := CALL cbc
+r := dyj
+WRITE r
+RETURN #0

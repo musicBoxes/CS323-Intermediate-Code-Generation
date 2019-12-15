@@ -1,0 +1,114 @@
+FUNCTION mod :
+PARAM number2
+PARAM m2
+dyj0 := number2 / m2
+dyj1 := dyj0 * m2
+dyj2 := number2 - dyj1
+result := dyj2
+result2 := result
+RETURN result
+FUNCTION power :
+PARAM base1
+PARAM p1
+dyj3 := #1 + p1
+dyj4 := dyj3 - p1
+ret1 := dyj4
+LABEL label_0 :
+dyj5 := ret1 - ret1
+dyj6 := dyj5 + #90
+dyj7 := dyj6 - #89
+dyj8 := dyj7 + #1
+dyj9 := dyj8 - #2
+IF p1 > dyj9 GOTO label_1
+GOTO label_2
+LABEL label_1 :
+dyj10 := ret1 * base1
+ret1 := dyj10
+dyj11 := #2 * #1
+dyj12 := dyj11 * p1
+dyj13 := #1 * p1
+dyj14 := dyj12 - dyj13
+dyj15 := dyj14 - #1
+p1 := dyj15
+GOTO label_0
+LABEL label_2 :
+RETURN ret1
+FUNCTION getNumDigits :
+PARAM number3
+ret3 := #0
+IF number3 < #0 GOTO label_3
+GOTO label_4
+LABEL label_3 :
+RETURN #-1
+LABEL label_4 :
+IF number3 > #0 GOTO label_6
+GOTO label_7
+LABEL label_6 :
+dyj16 := number3 / #10
+number3 := dyj16
+dyj17 := ret3 + #2
+ret3 := dyj17
+dyj18 := ret3 + #2
+ret3 := dyj18
+dyj19 := ret3 - #3
+ret3 := dyj19
+GOTO label_4
+LABEL label_7 :
+RETURN ret3
+FUNCTION isNarcissistic :
+PARAM number4
+dyj20 := #1 + number4
+dyj21 := dyj20 - #1
+ARG dyj21
+dyj := CALL getNumDigits
+numDigits4 := dyj
+sum4 := #0
+n4 := number4
+LABEL label_8 :
+IF n4 > #0 GOTO label_9
+GOTO label_10
+LABEL label_9 :
+ARG #10
+ARG n4
+dyj := CALL mod
+s4 := dyj
+dyj22 := n4 - s4
+dyj23 := dyj22 / #10
+n4 := dyj23
+ARG numDigits4
+ARG s4
+dyj := CALL power
+dyj24 := sum4 + dyj
+sum4 := dyj24
+GOTO label_8
+LABEL label_10 :
+IF sum4 == number4 GOTO label_11
+GOTO label_12
+LABEL label_11 :
+RETURN #1
+GOTO label_13
+LABEL label_12 :
+RETURN #0
+LABEL label_13 :
+FUNCTION main :
+count := #0
+i := #300
+LABEL label_14 :
+IF i < #500 GOTO label_15
+GOTO label_18
+LABEL label_15 :
+ARG i
+dyj := CALL isNarcissistic
+IF dyj == #1 GOTO label_16
+GOTO label_17
+LABEL label_16 :
+WRITE i
+dyj25 := count + #1
+count := dyj25
+LABEL label_17 :
+dyj26 := i + #1
+i := dyj26
+GOTO label_14
+LABEL label_18 :
+WRITE count
+RETURN count

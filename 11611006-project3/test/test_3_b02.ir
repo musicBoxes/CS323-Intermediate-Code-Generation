@@ -1,0 +1,32 @@
+DEC temp 8
+FUNCTION add :
+dyj0 :=
+RETURN dyj0
+FUNCTION main :
+DEC op 8
+DEC r 8
+i := #0
+j := #0
+LABEL label_0 :
+IF i < #2 GOTO label_1
+GOTO label_5
+LABEL label_1 :
+IF j < #2 GOTO label_3
+GOTO label_4
+LABEL label_3 :
+dyj1 := i + j
+ := dyj1
+dyj2 := j + #1
+j := dyj2
+GOTO label_1
+LABEL label_4 :
+ARG op
+dyj := CALL add
+ := dyj
+WRITE
+dyj3 := i + #1
+i := dyj3
+j := #0
+GOTO label_0
+LABEL label_5 :
+RETURN #0

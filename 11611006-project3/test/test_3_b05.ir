@@ -1,0 +1,62 @@
+FUNCTION squaRever :
+PARAM num
+flag := #0
+DEC array 12
+j := #0
+dyj0 := num / #100
+ := dyj0
+dyj1 := num / #10
+dyj2 := #10 *
+dyj3 := dyj1 - dyj2
+ := dyj3
+dyj4 := #100 *
+dyj5 := num - dyj4
+dyj6 := #10 *
+dyj7 := dyj5 - dyj6
+ := dyj7
+IF
+GOTO label_1
+LABEL label_0 :
+flag := #0
+GOTO label_6
+LABEL label_1 :
+IF j < #12 GOTO label_3
+GOTO label_6
+LABEL label_3 :
+dyj8 := j * j
+dyj9 := dyj8 - num
+IF dyj9 == #0 GOTO label_4
+GOTO label_5
+LABEL label_4 :
+flag := #1
+LABEL label_5 :
+dyj10 := j + #1
+j := dyj10
+GOTO label_1
+LABEL label_6 :
+IF flag == #1 GOTO label_8
+GOTO label_9
+LABEL label_8 :
+RETURN #1
+GOTO label_10
+LABEL label_9 :
+RETURN #0
+LABEL label_10 :
+FUNCTION main :
+i := #100
+LABEL label_11 :
+IF i < #150 GOTO label_12
+GOTO label_15
+LABEL label_12 :
+ARG i
+dyj := CALL squaRever
+IF dyj == #1 GOTO label_13
+GOTO label_14
+LABEL label_13 :
+WRITE i
+LABEL label_14 :
+dyj11 := i + #1
+i := dyj11
+GOTO label_11
+LABEL label_15 :
+RETURN #0

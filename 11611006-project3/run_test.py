@@ -38,6 +38,14 @@ for i in range(1, 11):
     # cmpFile("./test/test_2_r%02d.out"%i, "./test/test_2_r%02d.output.out"%i)
     # cpFile("./test/test_2_r%02d.out"%i, "./test/test_2_r%02d.output.out"%i);
     
+for i in range(1, 6):
+    print(i)
+    cmd = "./bin/splc ./test/test_3_b%02d.spl"%(i)
+    # print(cmd)
+    os.system(cmd)
+    # cmpFile("./test/test_2_r%02d.out"%i, "./test/test_2_r%02d.output.out"%i)
+    # cpFile("./test/test_2_r%02d.out"%i, "./test/test_2_r%02d.output.out"%i);
+    
 '''
 for i in range(1, 3):
     print(i)

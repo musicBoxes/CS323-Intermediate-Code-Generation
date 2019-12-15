@@ -3099,7 +3099,7 @@ int main(int argc, char** args){
 	// output
 	char outputPath[256];
 	strcpy(outputPath, args[1]);
-	strcpy(outputPath+strlen(outputPath)-3, "out");
+	strcpy(outputPath+strlen(outputPath)-3, "ir");
 	//printf("OutputPath = %s\n", outputPath);
 	freopen(outputPath, "w", stdout);
 	

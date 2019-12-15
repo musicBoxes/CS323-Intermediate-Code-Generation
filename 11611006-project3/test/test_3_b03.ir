@@ -1,0 +1,53 @@
+FUNCTION main :
+DEC x 20
+i := #0
+N := #5
+j := #0
+LABEL label_0 :
+IF i < #5 GOTO label_1
+GOTO label_2
+LABEL label_1 :
+READ
+dyj0 := i + #1
+i := dyj0
+GOTO label_0
+LABEL label_2 :
+i := N
+LABEL label_3 :
+IF i > #0 GOTO label_4
+GOTO label_10
+LABEL label_4 :
+dyj1 := i - #1
+IF j < dyj1 GOTO label_6
+GOTO label_9
+LABEL label_6 :
+dyj2 := j + #1
+IF
+GOTO label_8
+LABEL label_7 :
+temp :=
+dyj3 := j + #1
+ :=
+dyj4 := j + #1
+ := temp
+LABEL label_8 :
+dyj5 := j + #1
+j := dyj5
+GOTO label_4
+LABEL label_9 :
+j := #0
+dyj6 := i - #1
+i := dyj6
+GOTO label_3
+LABEL label_10 :
+i := #0
+LABEL label_11 :
+IF i < #5 GOTO label_12
+GOTO label_13
+LABEL label_12 :
+WRITE
+dyj7 := i + #1
+i := dyj7
+GOTO label_11
+LABEL label_13 :
+RETURN #0
