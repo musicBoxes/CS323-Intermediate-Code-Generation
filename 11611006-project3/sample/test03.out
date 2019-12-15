@@ -1,15 +1,14 @@
 FUNCTION add :
 PARAM temp
-dyj0 := &temp + #4
-dyj1 := &temp + #0
+dyj0 := &temp + #0
+dyj1 := &temp + #4
 dyj2 := dyj0 + dyj1
 RETURN dyj2
 FUNCTION main :
 DEC op 8
-dyj3 := &op + #4
-dyj10 := #8 / #8
+dyj3 := &op + #0
 *dyj3 := #1
-dyj4 := &op + #0
+dyj4 := &op + #4
 *dyj4 := #2
 ARG &op
 dyj := CALL add

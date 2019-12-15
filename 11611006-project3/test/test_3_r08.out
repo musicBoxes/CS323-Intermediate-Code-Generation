@@ -1,11 +1,10 @@
 FUNCTION main :
-READ dyj
-n := dyj
+READ n
 IF n > #0 GOTO label_0
 GOTO label_1
 LABEL label_0 :
 WRITE #1
-GOTO label_5
+GOTO label_4
 LABEL label_1 :
 IF n < #0 GOTO label_2
 GOTO label_3
@@ -15,5 +14,4 @@ GOTO label_4
 LABEL label_3 :
 WRITE #0
 LABEL label_4 :
-LABEL label_5 :
 RETURN #0

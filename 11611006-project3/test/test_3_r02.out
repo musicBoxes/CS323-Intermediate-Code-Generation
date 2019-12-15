@@ -1,8 +1,6 @@
 FUNCTION main :
-READ dyj
-year := dyj
-READ dyj
-month := dyj
+READ year
+READ month
 dyj0 := year / #100
 dyj1 := dyj0 * #100
 IF year == dyj1 GOTO label_0
@@ -17,7 +15,7 @@ IF month == #2 GOTO label_2
 GOTO label_3
 LABEL label_2 :
 WRITE #29
-GOTO label_7
+GOTO label_6
 LABEL label_3 :
 dyj4 := month / #2
 dyj5 := dyj4 * #2
@@ -29,14 +27,13 @@ GOTO label_6
 LABEL label_5 :
 WRITE #31
 LABEL label_6 :
-LABEL label_7 :
 GOTO label_15
 LABEL label_8 :
 IF month == #2 GOTO label_9
 GOTO label_10
 LABEL label_9 :
 WRITE #28
-GOTO label_14
+GOTO label_13
 LABEL label_10 :
 dyj6 := month / #2
 dyj7 := dyj6 * #2
@@ -48,9 +45,8 @@ GOTO label_13
 LABEL label_12 :
 WRITE #31
 LABEL label_13 :
-LABEL label_14 :
 LABEL label_15 :
-GOTO label_32
+GOTO label_31
 LABEL label_16 :
 dyj8 := year / #4
 dyj9 := dyj8 * #4
@@ -61,7 +57,7 @@ IF month == #2 GOTO label_18
 GOTO label_19
 LABEL label_18 :
 WRITE #29
-GOTO label_23
+GOTO label_22
 LABEL label_19 :
 dyj10 := month / #2
 dyj11 := dyj10 * #2
@@ -73,14 +69,13 @@ GOTO label_22
 LABEL label_21 :
 WRITE #31
 LABEL label_22 :
-LABEL label_23 :
 GOTO label_31
 LABEL label_24 :
 IF month == #2 GOTO label_25
 GOTO label_26
 LABEL label_25 :
 WRITE #28
-GOTO label_30
+GOTO label_29
 LABEL label_26 :
 dyj12 := month / #2
 dyj13 := dyj12 * #2
@@ -92,7 +87,5 @@ GOTO label_29
 LABEL label_28 :
 WRITE #31
 LABEL label_29 :
-LABEL label_30 :
 LABEL label_31 :
-LABEL label_32 :
 RETURN #0

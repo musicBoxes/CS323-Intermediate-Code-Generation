@@ -8,8 +8,7 @@ dyj1 := i2 * i2
 dyj2 := dyj1 * i2
 RETURN dyj2
 FUNCTION main :
-READ dyj
-a := dyj
+READ a
 WRITE a
 ARG a
 dyj := CALL sqr

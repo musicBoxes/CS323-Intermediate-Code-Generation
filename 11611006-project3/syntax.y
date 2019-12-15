@@ -205,7 +205,12 @@ FunDec: ID LP VarList RP {
 		TAC_Function(spl_instruction+instruction_cnt, $1->value+4); instruction_cnt ++; // "ID: "
 		FieldList* curVar = curFunc->args->next;
 		while (curVar != NULL){
-			TAC_Param(spl_instruction+instruction_cnt, curVar->name); instruction_cnt ++;
+			if (curVar->type->category == PRIMITIVE){
+				TAC_Param(spl_instruction+instruction_cnt, curVar->name); instruction_cnt ++;
+			}
+			else{
+				
+			}
 			curVar = curVar->next;
 		}
 	}
@@ -604,10 +609,14 @@ Exp: Exp ASSIGN Exp {
 		Type* typePtr = getExpTypePtr($1, @1.first_line);
 		if (typePtr->category == STRUCTURE){
 			FieldList* structField = typePtr->structure->next;
-			int offset = 0;
-			while (structField != NULL && !strcmp(structField->name, $3->value+4)) { // "ID "
-				offset += getTypeSize(structField->type);
+			FieldList* stack[16]; int size = 0;
+			while (structField != NULL){
+				stack[size ++] = structField;
 				structField = structField->next;
+			}
+			int offset = 0;
+			for (int i = size-1 ; i >= 0 && !strcmp(stack[i]->name, $3->value+4) ; i --){
+				offset += getTypeSize(stack[i]->type);
 			}
 			char tmpVar[16]; memset(tmpVar, 0, sizeof(tmpVar));
 			sprintf(tmpVar, "%s%d", interVar, inter_idx++);
@@ -1041,7 +1050,9 @@ int main(int argc, char** args){
     yyparse();
 	
 	//printf("instruction_cnt = %d\n", instruction_cnt);
+	optimizeTAC(spl_instruction, instruction_cnt);
 	for (int i = 0 ; i < instruction_cnt ; i ++){
+		if (!strcmp(spl_instruction[i].seg[0], "NOP")) continue;
 		printTAC(spl_instruction+i); 
 	}
 	

@@ -41,7 +41,7 @@ ARG y
 dyj := CALL gcd2
 RETURN dyj
 LABEL label_6 :
-GOTO label_11
+GOTO label_10
 LABEL label_7 :
 dyj9 := y / x
 dyj10 := dyj9 * x
@@ -58,12 +58,9 @@ ARG x
 dyj := CALL gcd2
 RETURN dyj
 LABEL label_10 :
-LABEL label_11 :
 FUNCTION main :
-READ dyj
-m := dyj
-READ dyj
-n := dyj
+READ m
+READ n
 ARG n
 ARG m
 dyj := CALL gcd1

@@ -13,8 +13,7 @@ dyj1 := n * dyj
 RETURN dyj1
 LABEL label_2 :
 FUNCTION main :
-READ dyj
-m := dyj
+READ m
 IF m > #1 GOTO label_3
 GOTO label_4
 LABEL label_3 :

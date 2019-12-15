@@ -37,11 +37,10 @@ FUNCTION getNumDigits :
 PARAM number3
 ret3 := #0
 IF number3 < #0 GOTO label_3
-GOTO label_5
+GOTO label_4
 LABEL label_3 :
 RETURN #-1
 LABEL label_4 :
-LABEL label_5 :
 IF number3 > #0 GOTO label_6
 GOTO label_7
 LABEL label_6 :

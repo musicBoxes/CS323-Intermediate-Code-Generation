@@ -18,7 +18,29 @@ void optimizeTAC(TAC *tac, int inst_cnt){
 	for (int i = 0 ; i < inst_cnt-1 ; i ++){
 		// merge label
 		if (!strcmp(tac[i].seg[0], "LABEL") && !strcmp(tac[i+1].seg[0], "LABEL")){
-			
+			char deleteLabel[16]; memset(deleteLabel, 0, sizeof(deleteLabel));
+			strcpy(deleteLabel, tac[i+1].seg[1]);
+			strcpy(tac[i+1].seg[0], "NOP");
+			for (int j = 0 ; j < inst_cnt ; j ++){
+				if (!strcmp(tac[j].seg[0], "GOTO") && !strcmp(tac[j].seg[1], deleteLabel)){
+					strcpy(tac[j].seg[1], tac[i].seg[1]);
+				}
+				if (!strcmp(tac[j].seg[0], "IF") && !strcmp(tac[j].seg[5], deleteLabel)){
+					strcpy(tac[j].seg[1], tac[i].seg[5]);
+				}
+			}
+		}
+		// merge goto label
+		if ((!strcmp(tac[i].seg[0], "GOTO") && !strcmp(tac[i+1].seg[0], "LABEL")) &&
+			!strcmp(tac[i].seg[1], tac[i+1].seg[1])){
+			strcpy(tac[i].seg[0], "NOP");
+			strcpy(tac[i+1].seg[0], "NOP");
+		}
+		// READ
+		if ((!strcmp(tac[i].seg[0], "READ") && !strcmp(tac[i].seg[1], "dyj")) &&
+			(!strcmp(tac[i+1].seg[1], ":=") && !strcmp(tac[i+1].seg[2], "dyj"))){
+			strcpy(tac[i].seg[1], tac[i+1].seg[0]);
+			strcpy(tac[i+1].seg[0], "NOP");
 		}
 	}
 }

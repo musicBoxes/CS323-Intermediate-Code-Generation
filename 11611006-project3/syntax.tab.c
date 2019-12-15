@@ -550,13 +550,13 @@ static const yytype_uint8 yytranslate[] =
 static const yytype_uint16 yyrline[] =
 {
        0,    93,    93,    99,   100,   102,   107,   108,   122,   124,
-     128,   133,   149,   153,   162,   175,   180,   197,   212,   220,
-     222,   223,   225,   230,   234,   240,   241,   244,   248,   252,
-     260,   274,   288,   308,   310,   314,   318,   327,   330,   338,
-     347,   349,   350,   352,   360,   379,   404,   411,   417,   424,
-     431,   438,   445,   452,   459,   465,   471,   477,   483,   487,
-     514,   515,   573,   600,   601,   621,   638,   642,   643,   644,
-     646,   648,   649,   651,   652,   654,   662,   673,   681
+     128,   133,   149,   153,   162,   175,   180,   197,   217,   225,
+     227,   228,   230,   235,   239,   245,   246,   249,   253,   257,
+     265,   279,   293,   313,   315,   319,   323,   332,   335,   343,
+     352,   354,   355,   357,   365,   384,   409,   416,   422,   429,
+     436,   443,   450,   457,   464,   470,   476,   482,   488,   492,
+     519,   520,   578,   605,   606,   630,   647,   651,   652,   653,
+     655,   657,   658,   660,   661,   663,   671,   682,   690
 };
 #endif
 
@@ -1754,15 +1754,20 @@ yyreduce:
 		TAC_Function(spl_instruction+instruction_cnt, (yyvsp[-3])->value+4); instruction_cnt ++; // "ID: "
 		FieldList* curVar = curFunc->args->next;
 		while (curVar != NULL){
-			TAC_Param(spl_instruction+instruction_cnt, curVar->name); instruction_cnt ++;
+			if (curVar->type->category == PRIMITIVE){
+				TAC_Param(spl_instruction+instruction_cnt, curVar->name); instruction_cnt ++;
+			}
+			else{
+				
+			}
 			curVar = curVar->next;
 		}
 	}
-#line 1762 "syntax.tab.c" /* yacc.c:1646  */
+#line 1767 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 18:
-#line 212 "syntax.y" /* yacc.c:1646  */
+#line 217 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 3; childNodeList[0]=(yyvsp[-2]); childNodeList[1]=(yyvsp[-1]); childNodeList[2]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "FunDec", (yyloc).first_line); 
 		addFuncStruct(funcList, (yyvsp[-2])->value+4, NULL, (yylsp[-2]).first_line); // "ID: "
@@ -1771,83 +1776,83 @@ yyreduce:
 		curFunc->args = NULL;
 		TAC_Function(spl_instruction+instruction_cnt, (yyvsp[-2])->value+4); instruction_cnt ++; //"ID: "
 	}
-#line 1775 "syntax.tab.c" /* yacc.c:1646  */
+#line 1780 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 220 "syntax.y" /* yacc.c:1646  */
+#line 225 "syntax.y" /* yacc.c:1646  */
     { printf("Error type B at Line %d: Missing \")\"\n", (yyloc).first_line); error_flag = 1; }
-#line 1781 "syntax.tab.c" /* yacc.c:1646  */
+#line 1786 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 222 "syntax.y" /* yacc.c:1646  */
+#line 227 "syntax.y" /* yacc.c:1646  */
     { childNum = 3; childNodeList[0]=(yyvsp[-2]); childNodeList[1]=(yyvsp[-1]); childNodeList[2]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "VarList", (yyloc).first_line); }
-#line 1787 "syntax.tab.c" /* yacc.c:1646  */
+#line 1792 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 223 "syntax.y" /* yacc.c:1646  */
+#line 228 "syntax.y" /* yacc.c:1646  */
     { childNum = 1; childNodeList[0]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "VarList", (yyloc).first_line); }
-#line 1793 "syntax.tab.c" /* yacc.c:1646  */
+#line 1798 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 225 "syntax.y" /* yacc.c:1646  */
+#line 230 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 2; childNodeList[0]=(yyvsp[-1]); childNodeList[1]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "ParamDec", (yyloc).first_line); 
 		addVar(tmpList, (yyvsp[0]), (yyloc).first_line);
 	}
-#line 1802 "syntax.tab.c" /* yacc.c:1646  */
+#line 1807 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 230 "syntax.y" /* yacc.c:1646  */
+#line 235 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 4; childNodeList[0]=(yyvsp[-3]); childNodeList[1]=(yyvsp[-2]); childNodeList[2]=(yyvsp[-1]); childNodeList[3]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "CompSt", (yyloc).first_line); 
 		list_deleteLast(allTmpVarList);
 	}
-#line 1811 "syntax.tab.c" /* yacc.c:1646  */
+#line 1816 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 24:
-#line 234 "syntax.y" /* yacc.c:1646  */
+#line 239 "syntax.y" /* yacc.c:1646  */
     { printf("Error type B at Line %d: Missing \"}\"\n", (yyloc).first_line); error_flag = 1; }
-#line 1817 "syntax.tab.c" /* yacc.c:1646  */
+#line 1822 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 240 "syntax.y" /* yacc.c:1646  */
+#line 245 "syntax.y" /* yacc.c:1646  */
     { childNum = 2; childNodeList[0]=(yyvsp[-1]); childNodeList[1]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "StmtList", (yyloc).first_line); }
-#line 1823 "syntax.tab.c" /* yacc.c:1646  */
+#line 1828 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 241 "syntax.y" /* yacc.c:1646  */
+#line 246 "syntax.y" /* yacc.c:1646  */
     { (yyval)=createEmpty(); }
-#line 1829 "syntax.tab.c" /* yacc.c:1646  */
+#line 1834 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 244 "syntax.y" /* yacc.c:1646  */
+#line 249 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 2; childNodeList[0]=(yyvsp[-1]); childNodeList[1]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Stmt", (yyloc).first_line); 
 		//printf("Stmt -> Exp SEMI\n");
 	}
-#line 1838 "syntax.tab.c" /* yacc.c:1646  */
+#line 1843 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 248 "syntax.y" /* yacc.c:1646  */
+#line 253 "syntax.y" /* yacc.c:1646  */
     { 
 		//printf("Stmt -> CompSt\n");
 		childNum = 1; childNodeList[0]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Stmt", (yyloc).first_line); 
 	}
-#line 1847 "syntax.tab.c" /* yacc.c:1646  */
+#line 1852 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 252 "syntax.y" /* yacc.c:1646  */
+#line 257 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 3; childNodeList[0]=(yyvsp[-2]); childNodeList[1]=(yyvsp[-1]); childNodeList[2]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Stmt", (yyloc).first_line); 
 		FieldList *ret = (FieldList*)malloc(sizeof(FieldList)); memset(ret, 0, sizeof(FieldList));
@@ -1856,11 +1861,11 @@ yyreduce:
 		list_pushBack(retList, ret);
 		TAC_Return(spl_instruction+instruction_cnt, (yyvsp[-1])->expVal); instruction_cnt ++;
 	}
-#line 1860 "syntax.tab.c" /* yacc.c:1646  */
+#line 1865 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 260 "syntax.y" /* yacc.c:1646  */
+#line 265 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 5; childNodeList[0]=(yyvsp[-6]); childNodeList[1]=(yyvsp[-5]); childNodeList[2]=(yyvsp[-4]); childNodeList[3]=(yyvsp[-3]); childNodeList[4]=(yyvsp[-1]); (yyval)=createNode(childNum, childNodeList, "Stmt", (yyloc).first_line); 
 		//printf("IF LP Exp RP L Stmt L\n");
@@ -1875,11 +1880,11 @@ yyreduce:
 			backPatchList((yyvsp[-4])->falseList, (yyvsp[0])->inst);
 		}
 	}
-#line 1879 "syntax.tab.c" /* yacc.c:1646  */
+#line 1884 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 274 "syntax.y" /* yacc.c:1646  */
+#line 279 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 7; childNodeList[0]=(yyvsp[-10]); childNodeList[1]=(yyvsp[-9]); childNodeList[2]=(yyvsp[-8]); childNodeList[3]=(yyvsp[-7]); childNodeList[4]=(yyvsp[-6]); childNodeList[5]=(yyvsp[-5]); childNodeList[6]=(yyvsp[-4]); (yyval)=createNode(childNum, childNodeList, "Stmt", (yyloc).first_line); 
 		Type *typePtr = getExpTypePtr((yyvsp[-8]), (yylsp[-8]).first_line);
@@ -1894,11 +1899,11 @@ yyreduce:
 			backPatch((yyvsp[-4])->inst, (yyvsp[0])->inst);
 		}
 	}
-#line 1898 "syntax.tab.c" /* yacc.c:1646  */
+#line 1903 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 288 "syntax.y" /* yacc.c:1646  */
+#line 293 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 5; childNodeList[0]=(yyvsp[-7]); childNodeList[1]=(yyvsp[-6]); childNodeList[2]=(yyvsp[-5]); childNodeList[3]=(yyvsp[-4]); childNodeList[4]=(yyvsp[-3]); (yyval)=createNode(childNum, childNodeList, "Stmt", (yyloc).first_line); 
 		Type *typePtr = getExpTypePtr((yyvsp[-5]), (yylsp[-5]).first_line);
@@ -1918,35 +1923,35 @@ yyreduce:
 			backPatch((yyvsp[-1])->inst, whileStart[--loop_flag]);
 		}
 	}
-#line 1922 "syntax.tab.c" /* yacc.c:1646  */
+#line 1927 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 308 "syntax.y" /* yacc.c:1646  */
+#line 313 "syntax.y" /* yacc.c:1646  */
     { printf("Error type B at Line %d: Missing \";\"\n", (yyloc).first_line); error_flag = 1; }
-#line 1928 "syntax.tab.c" /* yacc.c:1646  */
+#line 1933 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 310 "syntax.y" /* yacc.c:1646  */
+#line 315 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 8; childNodeList[0]=(yyvsp[-7]); childNodeList[1]=(yyvsp[-6]); childNodeList[2]=(yyvsp[-5]); childNodeList[3]=(yyvsp[-4]); childNodeList[4]=(yyvsp[-3]); childNodeList[5]=(yyvsp[-2]); childNodeList[6]=(yyvsp[-1]); childNodeList[7]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Stmt", (yyloc).first_line); 
 		loop_flag--;
 	}
-#line 1937 "syntax.tab.c" /* yacc.c:1646  */
+#line 1942 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 314 "syntax.y" /* yacc.c:1646  */
+#line 319 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 9; childNodeList[0]=(yyvsp[-8]); childNodeList[1]=(yyvsp[-7]); childNodeList[2]=(yyvsp[-6]); childNodeList[3]=(yyvsp[-5]); childNodeList[4]=(yyvsp[-4]); childNodeList[5]=(yyvsp[-3]); childNodeList[6]=(yyvsp[-2]); childNodeList[7]=(yyvsp[-1]); childNodeList[8]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Stmt", (yyloc).first_line); 
 		loop_flag--;
 	}
-#line 1946 "syntax.tab.c" /* yacc.c:1646  */
+#line 1951 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 318 "syntax.y" /* yacc.c:1646  */
+#line 323 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 2; childNodeList[0]=(yyvsp[-1]); childNodeList[1]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Stmt", (yyloc).first_line); 
 		//printf("loop flag = %d\n", loop_flag);
@@ -1955,19 +1960,19 @@ yyreduce:
 			printf("Semantic Error at line %d: 'break' should be used in loop.\n", (yylsp[-1]).first_line);
 		}
 	}
-#line 1959 "syntax.tab.c" /* yacc.c:1646  */
+#line 1964 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 327 "syntax.y" /* yacc.c:1646  */
+#line 332 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 2; childNodeList[0]=(yyvsp[-1]); childNodeList[1]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "DefList", (yyloc).first_line); 
 	}
-#line 1967 "syntax.tab.c" /* yacc.c:1646  */
+#line 1972 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 330 "syntax.y" /* yacc.c:1646  */
+#line 335 "syntax.y" /* yacc.c:1646  */
     { 
 		(yyval)=createEmpty(); 
 		FieldList* varDefList = (FieldList*)malloc(sizeof(FieldList)); memset(varDefList, 0, sizeof(FieldList));
@@ -1975,11 +1980,11 @@ yyreduce:
 		list_link(varDefList->vars, tmpList);
 		list_pushBack(allTmpVarList, varDefList);
 	}
-#line 1979 "syntax.tab.c" /* yacc.c:1646  */
+#line 1984 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 338 "syntax.y" /* yacc.c:1646  */
+#line 343 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 3; childNodeList[0]=(yyvsp[-2]); childNodeList[1]=(yyvsp[-1]); childNodeList[2]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Def", (yyloc).first_line); 
 		if (strcmp((yyvsp[-2])->child[0]->value, "TYPE")) {// int float char
@@ -1989,29 +1994,29 @@ yyreduce:
 			
 		}
 	}
-#line 1993 "syntax.tab.c" /* yacc.c:1646  */
+#line 1998 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 347 "syntax.y" /* yacc.c:1646  */
+#line 352 "syntax.y" /* yacc.c:1646  */
     { printf("Error type B at Line %d: Missing \";\"\n", (yyloc).first_line); error_flag = 1; }
-#line 1999 "syntax.tab.c" /* yacc.c:1646  */
+#line 2004 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 349 "syntax.y" /* yacc.c:1646  */
+#line 354 "syntax.y" /* yacc.c:1646  */
     { childNum = 1; childNodeList[0]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "DecList", (yyloc).first_line); }
-#line 2005 "syntax.tab.c" /* yacc.c:1646  */
+#line 2010 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 350 "syntax.y" /* yacc.c:1646  */
+#line 355 "syntax.y" /* yacc.c:1646  */
     { childNum = 3; childNodeList[0]=(yyvsp[-2]); childNodeList[1]=(yyvsp[-1]); childNodeList[2]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "DecList", (yyloc).first_line); }
-#line 2011 "syntax.tab.c" /* yacc.c:1646  */
+#line 2016 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 352 "syntax.y" /* yacc.c:1646  */
+#line 357 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 1; childNodeList[0]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Dec", (yyloc).first_line); 
 		if (addVar(tmpList, (yyvsp[0]), (yyloc).first_line) == 0){
@@ -2020,11 +2025,11 @@ yyreduce:
 			}
 		}
 	}
-#line 2024 "syntax.tab.c" /* yacc.c:1646  */
+#line 2029 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 360 "syntax.y" /* yacc.c:1646  */
+#line 365 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 3; childNodeList[0]=(yyvsp[-2]); childNodeList[1]=(yyvsp[-1]); childNodeList[2]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Dec", (yyloc).first_line); 
 		if (addVar(tmpList, (yyvsp[-2]), (yyloc).first_line) == 0){
@@ -2042,11 +2047,11 @@ yyreduce:
 			}
 		}
 	}
-#line 2046 "syntax.tab.c" /* yacc.c:1646  */
+#line 2051 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 45:
-#line 379 "syntax.y" /* yacc.c:1646  */
+#line 384 "syntax.y" /* yacc.c:1646  */
     { 
 		//printf("Exp -> Exp ASSIGN Exp\n");
 		childNum = 3; childNodeList[0]=(yyvsp[-2]); childNodeList[1]=(yyvsp[-1]); childNodeList[2]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Exp", (yyloc).first_line); 
@@ -2072,11 +2077,11 @@ yyreduce:
 			TAC_Assign(spl_instruction+instruction_cnt, (yyvsp[-2])->expVal, (yyvsp[0])->expVal); instruction_cnt ++;
 		}
 	}
-#line 2076 "syntax.tab.c" /* yacc.c:1646  */
+#line 2081 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 46:
-#line 404 "syntax.y" /* yacc.c:1646  */
+#line 409 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 3; childNodeList[0]=(yyvsp[-3]); childNodeList[1]=(yyvsp[-2]); childNodeList[2]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Exp", (yyloc).first_line); 
 		backPatchList((yyvsp[-3])->trueList, (yyvsp[-1])->inst);
@@ -2084,22 +2089,22 @@ yyreduce:
 		mergeList((yyval)->falseList, (yyvsp[-3])->falseList, (yyvsp[0])->falseList);
 		//int *ptr = $$->falseList; while (*ptr != 0) printf("%d\n", *ptr), ptr ++;
 	}
-#line 2088 "syntax.tab.c" /* yacc.c:1646  */
+#line 2093 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 47:
-#line 411 "syntax.y" /* yacc.c:1646  */
+#line 416 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 3; childNodeList[0]=(yyvsp[-3]); childNodeList[1]=(yyvsp[-2]); childNodeList[2]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Exp", (yyloc).first_line); 
 		backPatchList((yyvsp[-3])->falseList, (yyvsp[-1])->inst);
 		memcpy((yyval)->falseList, (yyvsp[0])->falseList, sizeof((yyval)->falseList));
 		mergeList((yyval)->trueList, (yyvsp[-3])->trueList, (yyvsp[0])->trueList);
 	}
-#line 2099 "syntax.tab.c" /* yacc.c:1646  */
+#line 2104 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 48:
-#line 417 "syntax.y" /* yacc.c:1646  */
+#line 422 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 3; childNodeList[0]=(yyvsp[-2]); childNodeList[1]=(yyvsp[-1]); childNodeList[2]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Exp", (yyloc).first_line); 
 		(yyval)->trueList[0] = instruction_cnt;
@@ -2107,11 +2112,11 @@ yyreduce:
 		TAC_If(spl_instruction+instruction_cnt, (yyvsp[-2])->expVal, "<", (yyvsp[0])->expVal, ""); instruction_cnt ++;// "" need to be backpatch
 		TAC_Goto(spl_instruction+instruction_cnt, ""); instruction_cnt ++;
 	}
-#line 2111 "syntax.tab.c" /* yacc.c:1646  */
+#line 2116 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 424 "syntax.y" /* yacc.c:1646  */
+#line 429 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 3; childNodeList[0]=(yyvsp[-2]); childNodeList[1]=(yyvsp[-1]); childNodeList[2]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Exp", (yyloc).first_line); 
 		(yyval)->trueList[0] = instruction_cnt;
@@ -2119,11 +2124,11 @@ yyreduce:
 		TAC_If(spl_instruction+instruction_cnt, (yyvsp[-2])->expVal, "<=", (yyvsp[0])->expVal, ""); instruction_cnt ++;// "" need to be backpatch
 		TAC_Goto(spl_instruction+instruction_cnt, ""); instruction_cnt ++;
 	}
-#line 2123 "syntax.tab.c" /* yacc.c:1646  */
+#line 2128 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 431 "syntax.y" /* yacc.c:1646  */
+#line 436 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 3; childNodeList[0]=(yyvsp[-2]); childNodeList[1]=(yyvsp[-1]); childNodeList[2]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Exp", (yyloc).first_line); 
 		(yyval)->trueList[0] = instruction_cnt;
@@ -2131,11 +2136,11 @@ yyreduce:
 		TAC_If(spl_instruction+instruction_cnt, (yyvsp[-2])->expVal, ">", (yyvsp[0])->expVal, ""); instruction_cnt ++;// "" need to be backpatch
 		TAC_Goto(spl_instruction+instruction_cnt, ""); instruction_cnt ++;
 	}
-#line 2135 "syntax.tab.c" /* yacc.c:1646  */
+#line 2140 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 51:
-#line 438 "syntax.y" /* yacc.c:1646  */
+#line 443 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 3; childNodeList[0]=(yyvsp[-2]); childNodeList[1]=(yyvsp[-1]); childNodeList[2]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Exp", (yyloc).first_line); 
 		(yyval)->trueList[0] = instruction_cnt;
@@ -2143,11 +2148,11 @@ yyreduce:
 		TAC_If(spl_instruction+instruction_cnt, (yyvsp[-2])->expVal, ">=", (yyvsp[0])->expVal, ""); instruction_cnt ++;// "" need to be backpatch
 		TAC_Goto(spl_instruction+instruction_cnt, ""); instruction_cnt ++;
 	}
-#line 2147 "syntax.tab.c" /* yacc.c:1646  */
+#line 2152 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 52:
-#line 445 "syntax.y" /* yacc.c:1646  */
+#line 450 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 3; childNodeList[0]=(yyvsp[-2]); childNodeList[1]=(yyvsp[-1]); childNodeList[2]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Exp", (yyloc).first_line); 
 		(yyval)->trueList[0] = instruction_cnt;
@@ -2155,11 +2160,11 @@ yyreduce:
 		TAC_If(spl_instruction+instruction_cnt, (yyvsp[-2])->expVal, "!=", (yyvsp[0])->expVal, ""); instruction_cnt ++;// "" need to be backpatch
 		TAC_Goto(spl_instruction+instruction_cnt, ""); instruction_cnt ++;
 	}
-#line 2159 "syntax.tab.c" /* yacc.c:1646  */
+#line 2164 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 53:
-#line 452 "syntax.y" /* yacc.c:1646  */
+#line 457 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 3; childNodeList[0]=(yyvsp[-2]); childNodeList[1]=(yyvsp[-1]); childNodeList[2]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Exp", (yyloc).first_line);
 		(yyval)->trueList[0] = instruction_cnt;
@@ -2167,64 +2172,64 @@ yyreduce:
 		TAC_If(spl_instruction+instruction_cnt, (yyvsp[-2])->expVal, "==", (yyvsp[0])->expVal, ""); instruction_cnt ++;// "" need to be backpatch
 		TAC_Goto(spl_instruction+instruction_cnt, ""); instruction_cnt ++;		
 	}
-#line 2171 "syntax.tab.c" /* yacc.c:1646  */
+#line 2176 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 54:
-#line 459 "syntax.y" /* yacc.c:1646  */
+#line 464 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 3; childNodeList[0]=(yyvsp[-2]); childNodeList[1]=(yyvsp[-1]); childNodeList[2]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Exp", (yyloc).first_line); 
 		char tmpVar[8]; sprintf(tmpVar, "%s%d", interVar, inter_idx++);
 		TAC_Add(spl_instruction+instruction_cnt, tmpVar, (yyvsp[-2])->expVal, (yyvsp[0])->expVal); instruction_cnt ++;
 		strcpy((yyval)->expVal, tmpVar);
 	}
-#line 2182 "syntax.tab.c" /* yacc.c:1646  */
+#line 2187 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 55:
-#line 465 "syntax.y" /* yacc.c:1646  */
+#line 470 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 3; childNodeList[0]=(yyvsp[-2]); childNodeList[1]=(yyvsp[-1]); childNodeList[2]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Exp", (yyloc).first_line); 
 		char tmpVar[8]; sprintf(tmpVar, "%s%d", interVar, inter_idx++);
 		TAC_Sub(spl_instruction+instruction_cnt, tmpVar, (yyvsp[-2])->expVal, (yyvsp[0])->expVal); instruction_cnt ++;
 		strcpy((yyval)->expVal, tmpVar);
 	}
-#line 2193 "syntax.tab.c" /* yacc.c:1646  */
+#line 2198 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 56:
-#line 471 "syntax.y" /* yacc.c:1646  */
+#line 476 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 3; childNodeList[0]=(yyvsp[-2]); childNodeList[1]=(yyvsp[-1]); childNodeList[2]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Exp", (yyloc).first_line); 
 		char tmpVar[8]; sprintf(tmpVar, "%s%d", interVar, inter_idx++);
 		TAC_Mul(spl_instruction+instruction_cnt, tmpVar, (yyvsp[-2])->expVal, (yyvsp[0])->expVal); instruction_cnt ++;
 		strcpy((yyval)->expVal, tmpVar);
 	}
-#line 2204 "syntax.tab.c" /* yacc.c:1646  */
+#line 2209 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 57:
-#line 477 "syntax.y" /* yacc.c:1646  */
+#line 482 "syntax.y" /* yacc.c:1646  */
     {
 		childNum = 3; childNodeList[0]=(yyvsp[-2]); childNodeList[1]=(yyvsp[-1]); childNodeList[2]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Exp", (yyloc).first_line); 
 		char tmpVar[8]; sprintf(tmpVar, "%s%d", interVar, inter_idx++);
 		TAC_Div(spl_instruction+instruction_cnt, tmpVar, (yyvsp[-2])->expVal, (yyvsp[0])->expVal); instruction_cnt ++;
 		strcpy((yyval)->expVal, tmpVar);
 	}
-#line 2215 "syntax.tab.c" /* yacc.c:1646  */
+#line 2220 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 58:
-#line 483 "syntax.y" /* yacc.c:1646  */
+#line 488 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 3; childNodeList[0]=(yyvsp[-2]); childNodeList[1]=(yyvsp[-1]); childNodeList[2]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Exp", (yyloc).first_line); 
 		strcpy((yyval)->expVal, (yyvsp[-1])->expVal);
 	}
-#line 2224 "syntax.tab.c" /* yacc.c:1646  */
+#line 2229 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 59:
-#line 487 "syntax.y" /* yacc.c:1646  */
+#line 492 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 2; childNodeList[0]=(yyvsp[-1]); childNodeList[1]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Exp", (yyloc).first_line);
 		//printf("%s\n", $2->expVal);
@@ -2252,17 +2257,17 @@ yyreduce:
 			}
 		}
 	}
-#line 2256 "syntax.tab.c" /* yacc.c:1646  */
+#line 2261 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 60:
-#line 514 "syntax.y" /* yacc.c:1646  */
+#line 519 "syntax.y" /* yacc.c:1646  */
     { childNum = 2; childNodeList[0]=(yyvsp[-1]); childNodeList[1]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Exp", (yyloc).first_line); }
-#line 2262 "syntax.tab.c" /* yacc.c:1646  */
+#line 2267 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 61:
-#line 515 "syntax.y" /* yacc.c:1646  */
+#line 520 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 4; childNodeList[0]=(yyvsp[-3]); childNodeList[1]=(yyvsp[-2]); childNodeList[2]=(yyvsp[-1]); childNodeList[3]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Exp", (yyloc).first_line); 
 		//printf("Size = %d %s\n", list_size(funcList), $1->value+4);
@@ -2321,11 +2326,11 @@ yyreduce:
 		clearArg:
 		list_clear(funcArgs);
 	}
-#line 2325 "syntax.tab.c" /* yacc.c:1646  */
+#line 2330 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 62:
-#line 573 "syntax.y" /* yacc.c:1646  */
+#line 578 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 3; childNodeList[0]=(yyvsp[-2]); childNodeList[1]=(yyvsp[-1]); childNodeList[2]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Exp", (yyloc).first_line); 
 		FieldList* curFunc;
@@ -2353,27 +2358,31 @@ yyreduce:
 			}
 		}
 	}
-#line 2357 "syntax.tab.c" /* yacc.c:1646  */
+#line 2362 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 63:
-#line 600 "syntax.y" /* yacc.c:1646  */
+#line 605 "syntax.y" /* yacc.c:1646  */
     { childNum = 4; childNodeList[0]=(yyvsp[-3]); childNodeList[1]=(yyvsp[-2]); childNodeList[2]=(yyvsp[-1]); childNodeList[3]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Exp", (yyloc).first_line); }
-#line 2363 "syntax.tab.c" /* yacc.c:1646  */
+#line 2368 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 64:
-#line 601 "syntax.y" /* yacc.c:1646  */
+#line 606 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 3; childNodeList[0]=(yyvsp[-2]); childNodeList[1]=(yyvsp[-1]); childNodeList[2]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Exp", (yyloc).first_line); 
 		// return pointer
 		Type* typePtr = getExpTypePtr((yyvsp[-2]), (yylsp[-2]).first_line);
 		if (typePtr->category == STRUCTURE){
 			FieldList* structField = typePtr->structure->next;
-			int offset = 0;
-			while (structField != NULL && !strcmp(structField->name, (yyvsp[0])->value+4)) { // "ID "
-				offset += getTypeSize(structField->type);
+			FieldList* stack[16]; int size = 0;
+			while (structField != NULL){
+				stack[size ++] = structField;
 				structField = structField->next;
+			}
+			int offset = 0;
+			for (int i = size-1 ; i >= 0 && !strcmp(stack[i]->name, (yyvsp[0])->value+4) ; i --){
+				offset += getTypeSize(stack[i]->type);
 			}
 			char tmpVar[16]; memset(tmpVar, 0, sizeof(tmpVar));
 			sprintf(tmpVar, "%s%d", interVar, inter_idx++);
@@ -2384,11 +2393,11 @@ yyreduce:
 			(yyval)->isAddr = 1;
 		}
 	}
-#line 2388 "syntax.tab.c" /* yacc.c:1646  */
+#line 2397 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 65:
-#line 621 "syntax.y" /* yacc.c:1646  */
+#line 630 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 1; childNodeList[0]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Exp", (yyloc).first_line); 
 		FieldList* curVar;
@@ -2406,68 +2415,68 @@ yyreduce:
 			}
 		}
 	}
-#line 2410 "syntax.tab.c" /* yacc.c:1646  */
+#line 2419 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 66:
-#line 638 "syntax.y" /* yacc.c:1646  */
+#line 647 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 1; childNodeList[0]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Exp", (yyloc).first_line); 
 		sprintf((yyval)->expVal, "#%s", (yyvsp[0])->value+5); // "INT: "
 	}
-#line 2419 "syntax.tab.c" /* yacc.c:1646  */
+#line 2428 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 67:
-#line 642 "syntax.y" /* yacc.c:1646  */
+#line 651 "syntax.y" /* yacc.c:1646  */
     { childNum = 1; childNodeList[0]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Exp", (yyloc).first_line); }
-#line 2425 "syntax.tab.c" /* yacc.c:1646  */
+#line 2434 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 68:
-#line 643 "syntax.y" /* yacc.c:1646  */
+#line 652 "syntax.y" /* yacc.c:1646  */
     { childNum = 1; childNodeList[0]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Exp", (yyloc).first_line); }
-#line 2431 "syntax.tab.c" /* yacc.c:1646  */
+#line 2440 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 69:
-#line 644 "syntax.y" /* yacc.c:1646  */
+#line 653 "syntax.y" /* yacc.c:1646  */
     { printf("Error type B at Line %d: Missing \")\"\n", (yyloc).first_line); error_flag = 1; }
-#line 2437 "syntax.tab.c" /* yacc.c:1646  */
+#line 2446 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 70:
-#line 646 "syntax.y" /* yacc.c:1646  */
+#line 655 "syntax.y" /* yacc.c:1646  */
     { /*printf("error\n"); yyerrok;*/ error_flag = 1; }
-#line 2443 "syntax.tab.c" /* yacc.c:1646  */
+#line 2452 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 71:
-#line 648 "syntax.y" /* yacc.c:1646  */
+#line 657 "syntax.y" /* yacc.c:1646  */
     { childNum = 1; childNodeList[0]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "ExpList", (yyloc).first_line); }
-#line 2449 "syntax.tab.c" /* yacc.c:1646  */
+#line 2458 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 72:
-#line 649 "syntax.y" /* yacc.c:1646  */
+#line 658 "syntax.y" /* yacc.c:1646  */
     { childNum = 3; childNodeList[0]=(yyvsp[-2]); childNodeList[1]=(yyvsp[-1]); childNodeList[2]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "ExpList", (yyloc).first_line); }
-#line 2455 "syntax.tab.c" /* yacc.c:1646  */
+#line 2464 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 73:
-#line 651 "syntax.y" /* yacc.c:1646  */
+#line 660 "syntax.y" /* yacc.c:1646  */
     { (yyval)=(yyvsp[0]); }
-#line 2461 "syntax.tab.c" /* yacc.c:1646  */
+#line 2470 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 74:
-#line 652 "syntax.y" /* yacc.c:1646  */
+#line 661 "syntax.y" /* yacc.c:1646  */
     { (yyval) = createEmpty(); }
-#line 2467 "syntax.tab.c" /* yacc.c:1646  */
+#line 2476 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 75:
-#line 654 "syntax.y" /* yacc.c:1646  */
+#line 663 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 3; childNodeList[0]=(yyvsp[-2]); childNodeList[1]=(yyvsp[-1]); childNodeList[2]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Args", (yyloc).first_line); 
 		FieldList* arg = (FieldList*)malloc(sizeof(FieldList)); memset(arg, 0, sizeof(FieldList));
@@ -2476,11 +2485,11 @@ yyreduce:
 		//printf("type %s", TypeToString(arg->type));
 		list_pushBack(funcArgs, arg);
 	}
-#line 2480 "syntax.tab.c" /* yacc.c:1646  */
+#line 2489 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 76:
-#line 662 "syntax.y" /* yacc.c:1646  */
+#line 671 "syntax.y" /* yacc.c:1646  */
     { 
 		childNum = 1; childNodeList[0]=(yyvsp[0]); (yyval)=createNode(childNum, childNodeList, "Args", (yyloc).first_line); 
 		FieldList* arg = (FieldList*)malloc(sizeof(FieldList)); memset(arg, 0, sizeof(FieldList));
@@ -2489,22 +2498,22 @@ yyreduce:
 		//printf("type %d %d %s\n", type.category, type.primitive, TypeToString(&type));
 		list_pushBack(funcArgs, arg);
 	}
-#line 2493 "syntax.tab.c" /* yacc.c:1646  */
+#line 2502 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 77:
-#line 673 "syntax.y" /* yacc.c:1646  */
+#line 682 "syntax.y" /* yacc.c:1646  */
     {
 		(yyval)=createNode(0, childNodeList, "G", (yyloc).first_line); 
 		(yyval)->inst = instruction_cnt; 
 		//printf("GOTO\n");
 		TAC_Goto(spl_instruction+instruction_cnt, ""); instruction_cnt ++;
 	}
-#line 2504 "syntax.tab.c" /* yacc.c:1646  */
+#line 2513 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
   case 78:
-#line 681 "syntax.y" /* yacc.c:1646  */
+#line 690 "syntax.y" /* yacc.c:1646  */
     { 
 		(yyval)=createNode(0, childNodeList, "L", (yyloc).first_line); 
 		(yyval)->inst = instruction_cnt; 
@@ -2512,11 +2521,11 @@ yyreduce:
 		sprintf(LABEL, "label_%d", label_idx++);
 		TAC_Label(spl_instruction+instruction_cnt, LABEL); instruction_cnt ++;
 	}
-#line 2516 "syntax.tab.c" /* yacc.c:1646  */
+#line 2525 "syntax.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 2520 "syntax.tab.c" /* yacc.c:1646  */
+#line 2529 "syntax.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2751,7 +2760,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 689 "syntax.y" /* yacc.c:1906  */
+#line 698 "syntax.y" /* yacc.c:1906  */
 
 
 void yyerror(char* s){
@@ -3107,7 +3116,9 @@ int main(int argc, char** args){
     yyparse();
 	
 	//printf("instruction_cnt = %d\n", instruction_cnt);
+	optimizeTAC(spl_instruction, instruction_cnt);
 	for (int i = 0 ; i < instruction_cnt ; i ++){
+		if (!strcmp(spl_instruction[i].seg[0], "NOP")) continue;
 		printTAC(spl_instruction+i); 
 	}
 	
