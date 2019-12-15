@@ -87,6 +87,45 @@ int isSameType(const Type *a, const Type *b){
 	return 0;
 }
 
+int getTypeSize(Type *typePtr){
+	switch (typePtr->category){
+		case PRIMITIVE:{
+			switch (typePtr->primitive){
+				case INT:
+				return 4;
+				break;
+				
+				case FLOAT:
+				return 4;
+				break;
+				
+				case CHAR:
+				return 1;
+				break;
+			}
+		}
+		break;
+		
+		case ARRAY:{
+			Array *array = typePtr->array;
+			return array->size*getTypeSize(array->base);
+		}
+		break;
+		
+		case STRUCTURE:{
+			FieldList *structure = typePtr->structure->next;
+			int tot_size = 0;
+			while (structure != NULL){
+				tot_size += getTypeSize(structure->type);
+				structure = structure->next;
+			}
+			return tot_size;
+		}
+		break;
+	}
+	return 0;
+}
+
 FieldList* list_init(){
 	FieldList* head = (FieldList*)malloc(sizeof(FieldList));
 	memset(head, 0, sizeof(FieldList));

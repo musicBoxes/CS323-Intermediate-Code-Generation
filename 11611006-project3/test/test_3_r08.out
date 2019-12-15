@@ -1,16 +1,19 @@
 FUNCTION main :
 READ dyj
 n := dyj
-IF n > #0 GOTO label0
-GOTO label1
-LABEL label0 :
-GOTO label5
-LABEL label1 :
-IF n < #0 GOTO label2
-GOTO label3
-LABEL label2 :
-GOTO label4
-LABEL label3 :
-LABEL label4 :
-LABEL label5 :
+IF n > #0 GOTO label_0
+GOTO label_1
+LABEL label_0 :
+WRITE #1
+GOTO label_5
+LABEL label_1 :
+IF n < #0 GOTO label_2
+GOTO label_3
+LABEL label_2 :
+WRITE #-1
+GOTO label_4
+LABEL label_3 :
+WRITE #0
+LABEL label_4 :
+LABEL label_5 :
 RETURN #0

@@ -4,22 +4,23 @@ PARAM m2
 dyj0 := number2 / m2
 dyj1 := dyj0 * m2
 dyj2 := number2 - dyj1
-result := dyj
-result2 := dyj
+result := dyj2
+result2 := result
 RETURN result
 FUNCTION power :
 PARAM base1
 PARAM p1
 dyj3 := #1 + p1
 dyj4 := dyj3 - p1
-ret1 := dyj
+ret1 := dyj4
 dyj5 := ret1 - ret1
 dyj6 := dyj5 + #90
 dyj7 := dyj6 - #89
 dyj8 := dyj7 + #1
 dyj9 := dyj8 - #2
-IF p1 > dyj9 GOTO
-GOTO
+IF p1 > dyj9 GOTO label_0
+GOTO label_1
+LABEL label_0 :
 dyj10 := ret1 * base1
 ret1 := dyj10
 dyj11 := #2 * #1
@@ -28,17 +29,19 @@ dyj13 := #1 * p1
 dyj14 := dyj12 - dyj13
 dyj15 := dyj14 - #1
 p1 := dyj15
+LABEL label_1 :
 RETURN ret1
 FUNCTION getNumDigits :
 PARAM number3
-ret3 := dyj
-IF number3 < #0 GOTO label0
-GOTO label1
-LABEL label0 :
+ret3 := #0
+IF number3 < #0 GOTO label_2
+GOTO label_3
+LABEL label_2 :
 RETURN #-1
-LABEL label1 :
-IF number3 > #0 GOTO
-GOTO
+LABEL label_3 :
+IF number3 > #0 GOTO label_4
+GOTO label_5
+LABEL label_4 :
 dyj16 := number3 / #10
 number3 := dyj16
 dyj17 := ret3 + #2
@@ -47,41 +50,58 @@ dyj18 := ret3 + #2
 ret3 := dyj18
 dyj19 := ret3 - #3
 ret3 := dyj19
+LABEL label_5 :
 RETURN ret3
 FUNCTION isNarcissistic :
 PARAM number4
 dyj20 := #1 + number4
 dyj21 := dyj20 - #1
+ARG dyj21
+dyj := CALL getNumDigits
 numDigits4 := dyj
-sum4 := dyj
-n4 := dyj
-IF n4 > #0 GOTO
-GOTO
-s4 :=
+sum4 := #0
+n4 := number4
+IF n4 > #0 GOTO label_6
+GOTO label_7
+LABEL label_6 :
+ARG #10
+ARG n4
+dyj := CALL mod
+s4 := dyj
 dyj22 := n4 - s4
 dyj23 := dyj22 / #10
 n4 := dyj23
-dyj24 := sum4 +
+ARG numDigits4
+ARG s4
+dyj := CALL power
+dyj24 := sum4 + dyj
 sum4 := dyj24
-IF sum4 = number4 GOTO label2
-GOTO label3
-LABEL label2 :
+LABEL label_7 :
+IF sum4 == number4 GOTO label_8
+GOTO label_9
+LABEL label_8 :
 RETURN #1
-GOTO label4
-LABEL label3 :
+GOTO label_10
+LABEL label_9 :
 RETURN #0
-LABEL label4 :
+LABEL label_10 :
 FUNCTION main :
-count := dyj
-i := dyj
-IF i < #500 GOTO
-GOTO
-IF
-GOTO label6
-LABEL label5 :
+count := #0
+i := #300
+IF i < #500 GOTO label_11
+GOTO label_14
+LABEL label_11 :
+ARG i
+dyj := CALL isNarcissistic
+IF dyj == #1 GOTO label_12
+GOTO label_13
+LABEL label_12 :
+WRITE i
 dyj25 := count + #1
 count := dyj25
-LABEL label6 :
+LABEL label_13 :
 dyj26 := i + #1
 i := dyj26
+LABEL label_14 :
+WRITE count
 RETURN count

@@ -80,6 +80,7 @@ void { yylval = createLeaf("VOID"); return VOID; }
 \*\/ { return CE; }
 [ \r\t]+ { }
 [\n] { yycolno = 1; }
-[^ \n\r\t\(\)\.\{\};,!&\*\[\]\|\<>=\+-]* { printf("Error type A at line %d: Unknown lexeme \"%s\" \n", yylineno, yytext); error_flag = 1; }
+
 . { printf("Error type A at Line %d: Unknown characters %s\n", yylineno, yytext); }
 %%
+//[^ \n\r\t\(\)\.\{\};,!&\*\[\]\|\<>=\+-]* { printf("Error type A at line %d: Unknown lexeme \"%s\" \n", yylineno, yytext); error_flag = 1; }

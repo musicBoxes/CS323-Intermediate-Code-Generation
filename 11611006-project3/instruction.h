@@ -14,6 +14,10 @@ void printTAC(TAC *tac){
 	printf("\n");
 }
 
+void optimizeTAC(TAC *tac, int inst_cnt){
+	
+}
+
 // LABEL x : | define a label x
 void TAC_Label(TAC *tac, char *x){
 	strcpy(tac->seg[0], "LABEL");

@@ -1,28 +1,33 @@
 FUNCTION main :
-N := dyj
-num := dyj
-i := dyj
-k := dyj
-IF k <= N GOTO
-GOTO
-IF i <= k GOTO
-GOTO
+N := #30
+num := #0
+i := #1
+k := #1
+IF k <= N GOTO label_0
+GOTO label_7
+LABEL label_0 :
+IF i <= k GOTO label_1
+GOTO label_4
+LABEL label_1 :
 dyj0 := k / i
 dyj1 := dyj0 * i
-IF k = dyj1 GOTO label0
-GOTO label1
-LABEL label0 :
+IF k == dyj1 GOTO label_2
+GOTO label_3
+LABEL label_2 :
 dyj2 := num + #1
 num := dyj2
-LABEL label1 :
+LABEL label_3 :
 dyj3 := i + #1
 i := dyj3
-IF num = #2 GOTO label2
-GOTO label3
-LABEL label2 :
-LABEL label3 :
+LABEL label_4 :
+IF num == #2 GOTO label_5
+GOTO label_6
+LABEL label_5 :
+WRITE k
+LABEL label_6 :
 i := #1
 num := #0
 dyj4 := k + #1
 k := dyj4
+LABEL label_7 :
 RETURN #0

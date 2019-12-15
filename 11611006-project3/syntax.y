@@ -22,8 +22,6 @@
 	TAC spl_instruction[1024];
 	int instruction_cnt = 0;
 	const char *interVar = "dyj";
-	const char *interAddVar = "dyj_add";
-	const char *interMulVar = "dyj_mul";
 	
 	// temporary store child node
 	struct treeNode* childNodeList[10];
@@ -286,13 +284,17 @@ Stmt: Exp SEMI {
 			backPatch($7->inst, $11->inst);
 		}
 	}
-    | WHILE LP Exp RP Stmt { 
+    | WHILE LP Exp RP L Stmt L { 
 		childNum = 5; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; childNodeList[3]=$4; childNodeList[4]=$5; $$=createNode(childNum, childNodeList, "Stmt", @$.first_line); 
 		loop_flag--;
 		Type *typePtr = getExpTypePtr($3, @3.first_line);
 		if (!(typePtr->category == PRIMITIVE && typePtr->primitive == INT)){
 			error_flag = 1;
 			printf("Semantic Error at line %d: Use non-int type variable as condition.\n", @3.first_line);
+		}
+		else{
+			backPatchList($3->trueList, $5->inst);
+			backPatchList($3->falseList, $7->inst);
 		}
 	}
 //	| Exp error { printf("Error type B at Line %d: Exp error\n", @$.first_line); error_flag = 1; }
@@ -328,6 +330,12 @@ DefList: Def DefList {
     ;
 Def: Specifier DecList SEMI { 
 		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Def", @$.first_line); 
+		if (strcmp($1->child[0]->value, "TYPE")) {// int float char
+			
+		}
+		else{
+			
+		}
 	}
     | Specifier DecList error { printf("Error type B at Line %d: Missing \";\"\n", @$.first_line); error_flag = 1; }
 	;
@@ -336,7 +344,11 @@ DecList: Dec { childNum = 1; childNodeList[0]=$1; $$=createNode(childNum, childN
     ;
 Dec: VarDec { 
 		childNum = 1; childNodeList[0]=$1; $$=createNode(childNum, childNodeList, "Dec", @$.first_line); 
-		addVar(tmpList, $1, @$.first_line);
+		if (addVar(tmpList, $1, @$.first_line) == 0){
+			if (baseType->category != PRIMITIVE){
+				TAC_Dec(spl_instruction+instruction_cnt, $1->child[0]->value+4, getTypeSize(baseType)); instruction_cnt ++; // "ID: "
+			}
+		}
 	}
     | VarDec ASSIGN Exp { 
 		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Dec", @$.first_line); 
@@ -347,7 +359,12 @@ Dec: VarDec {
 				error_flag = 1;
 				printf("Error type 5 at Line %d: unmatching type on both sides of assignment\n", @2.first_line);
 			}
-			TAC_Assign(spl_instruction+instruction_cnt, varName, interVar); instruction_cnt ++;
+			else{
+				if (baseType->category != PRIMITIVE){
+					//TAC_Dec(spl_instruction+instruction_cnt, $1->value+4, getTypeSize(baseType)); instruction_cnt ++; // "ID: "
+				}
+				TAC_Assign(spl_instruction+instruction_cnt, varName, $3->expVal); instruction_cnt ++;
+			}
 		}
 	}
 //	| VarDec ASSIGN error { printf("Error type B at Line %d: VarDec ASSIGN error\n", @$.first_line); error_flag = 1; }
@@ -422,7 +439,7 @@ Exp: Exp ASSIGN Exp {
 		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line);
 		$$->trueList[0] = instruction_cnt;
 		$$->falseList[0] = instruction_cnt+1;
-		TAC_If(spl_instruction+instruction_cnt, $1->expVal, "=", $3->expVal, ""); instruction_cnt ++;// "" need to be backpatch
+		TAC_If(spl_instruction+instruction_cnt, $1->expVal, "==", $3->expVal, ""); instruction_cnt ++;// "" need to be backpatch
 		TAC_Goto(spl_instruction+instruction_cnt, ""); instruction_cnt ++;		
 	}
     | Exp PLUS Exp { 
@@ -567,14 +584,41 @@ Exp: Exp ASSIGN Exp {
 		}
 	}
     | Exp LB Exp RB { childNum = 4; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; childNodeList[3]=$4; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); }
-    | Exp DOT ID { childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); }
+    | Exp DOT ID { 
+		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); 
+		// return pointer
+		Type* typePtr = getExpTypePtr($1, @1.first_line);
+		if (typePtr->category == STRUCTURE){
+			FieldList* structField = typePtr->structure->next;
+			int offset = 0;
+			while (structField != NULL && !strcmp(structField->name, $3->value+4)) { // "ID "
+				offset += getTypeSize(structField->type);
+				structField = structField->next;
+			}
+			char tmpVar[16]; memset(tmpVar, 0, sizeof(tmpVar));
+			sprintf(tmpVar, "%s%d", interVar, inter_idx++);
+			char constNum[16]; memset(constNum, 0, sizeof(constNum));
+			sprintf(constNum, "#%d", offset);
+			TAC_Add(spl_instruction+instruction_cnt, tmpVar, $1->expVal, constNum); instruction_cnt ++;
+			strcpy($$->expVal, tmpVar);
+		}
+	}
     | ID { 
 		childNum = 1; childNodeList[0]=$1; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); 
-		if (validUseVar($1->value+4) == NULL) { //"ID: "
+		FieldList* curVar;
+		if ((curVar = validUseVar($1->value+4)) == NULL) { //"ID: "
 			error_flag = 1;
 			printf("Error type 1 at Line %d: Variable '%s' is not defined\n", @$.first_line, $1->value+4);
 		}
-		strcpy($$->expVal, $1->value+4);
+		else{
+			if (curVar->type->category == PRIMITIVE){ // for primitive type, just return itself
+				strcpy($$->expVal, $1->value+4);
+			}
+			else { // for other type, return its pointer
+				$$->expVal[0] = '&';
+				strcpy($$->expVal+1, $1->value+4);
+			}
+		}
 	}
     | INT { 
 		childNum = 1; childNodeList[0]=$1; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); 
@@ -622,8 +666,8 @@ G: %empty {
 L: %empty { 
 		$$=createNode(0, childNodeList, "L", @$.first_line); 
 		$$->inst = instruction_cnt; 
-		char LABEL[8]; memset(LABEL, 0, sizeof(LABEL));
-		sprintf(LABEL, "label%d", label_idx++);
+		char LABEL[16]; memset(LABEL, 0, sizeof(LABEL));
+		sprintf(LABEL, "label_%d", label_idx++);
 		TAC_Label(spl_instruction+instruction_cnt, LABEL); instruction_cnt ++;
 	}
 	;

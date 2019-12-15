@@ -7,8 +7,13 @@ dyj1 := k * #2
 dyj2 := dyj0 + dyj1
 RETURN dyj2
 FUNCTION main :
-a := dyj
-b := dyj
+a := #110
+b := #97
+c := #3
+ARG c
+ARG b
+ARG a
+dyj := CALL foo
 c := dyj
-c :=
+WRITE c
 RETURN #0

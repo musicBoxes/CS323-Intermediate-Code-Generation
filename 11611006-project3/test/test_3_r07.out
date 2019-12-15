@@ -1,59 +1,73 @@
-Error type A at line 5: Unknown lexeme "a/" 
-Error type 8 at Line 22: Function’s return value type mismatches the declared type
-Error type 8 at Line 29: Function’s return value type mismatches the declared type
 FUNCTION gcd1 :
 PARAM a
 PARAM b
-dyj0 := b * b
-dyj1 := a - dyj0
-temp := dyj1
-IF temp != #0 GOTO
-GOTO
+dyj0 := a / b
+dyj1 := dyj0 * b
+dyj2 := a - dyj1
+temp := dyj2
+IF temp != #0 GOTO label_0
+GOTO label_1
+LABEL label_0 :
 a := b
 b := temp
-dyj2 := a / b
-dyj3 := dyj2 * b
-dyj4 := a - dyj3
-temp := dyj4
+dyj3 := a / b
+dyj4 := dyj3 * b
+dyj5 := a - dyj4
+temp := dyj5
+LABEL label_1 :
 result := b
 RETURN result
 FUNCTION gcd2 :
 PARAM x
 PARAM y
-remainder := dyj
-IF x > y GOTO label0
-GOTO label4
-LABEL label0 :
-dyj5 := x / y
-dyj6 := dyj5 * y
-dyj7 := x - dyj6
-remainder := dyj7
-IF remainder = #0 GOTO label1
-GOTO label2
-LABEL label1 :
+remainder := #0
+IF x > y GOTO label_2
+GOTO label_6
+LABEL label_2 :
+dyj6 := x / y
+dyj7 := dyj6 * y
+dyj8 := x - dyj7
+remainder := dyj8
+IF remainder == #0 GOTO label_3
+GOTO label_4
+LABEL label_3 :
 RETURN y
-GOTO label3
-LABEL label2 :
-RETURN
-LABEL label3 :
-GOTO label8
-LABEL label4 :
-dyj8 := y / x
-dyj9 := dyj8 * x
-dyj10 := y - dyj9
-remainder := dyj10
-IF remainder = #0 GOTO label5
-GOTO label6
-LABEL label5 :
+GOTO label_5
+LABEL label_4 :
+ARG remainder
+ARG y
+dyj := CALL gcd2
+RETURN dyj
+LABEL label_5 :
+GOTO label_10
+LABEL label_6 :
+dyj9 := y / x
+dyj10 := dyj9 * x
+dyj11 := y - dyj10
+remainder := dyj11
+IF remainder == #0 GOTO label_7
+GOTO label_8
+LABEL label_7 :
 RETURN x
-GOTO label7
-LABEL label6 :
-RETURN
-LABEL label7 :
-LABEL label8 :
+GOTO label_9
+LABEL label_8 :
+ARG remainder
+ARG x
+dyj := CALL gcd2
+RETURN dyj
+LABEL label_9 :
+LABEL label_10 :
 FUNCTION main :
 READ dyj
 m := dyj
 READ dyj
 n := dyj
+ARG n
+ARG m
+dyj := CALL gcd1
+WRITE dyj
+ARG n
+ARG m
+dyj := CALL gcd2
+WRITE dyj
 RETURN #0

@@ -10,6 +10,13 @@ RETURN dyj2
 FUNCTION main :
 READ dyj
 a := dyj
-r :=
-r :=
+WRITE a
+ARG a
+dyj := CALL sqr
+r := dyj
+WRITE r
+ARG a
+dyj := CALL cbc
+r := dyj
+WRITE r
 RETURN #0
