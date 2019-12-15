@@ -13,7 +13,10 @@ struct treeNode
 	char expVal[16];
 	int trueList[16];
 	int falseList[16];
-	int inst;
+	union{
+		int inst;
+		int isAddr;
+	};
 };
 
 struct treeNode *createLeaf(char *text);
@@ -49,6 +52,7 @@ struct treeNode *createNode(int childNum, struct treeNode *a[], char *value, int
 		(node->child)[i] = a[i];
 	memset(node->trueList, 0, sizeof(node->trueList));
 	memset(node->falseList, 0, sizeof(node->falseList));
+	node->inst = 0;
 	return node;
 }
  

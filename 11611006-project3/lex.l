@@ -19,6 +19,11 @@
 	
 	extern int error_flag;
 	extern int loop_flag;
+	
+	extern int whileStart[];
+	extern TAC spl_instruction[];
+	extern int instruction_cnt;
+	extern int label_idx;
 %}
 INT_DEC -?([1-9][0-9]{0,9}))
 INT_HEX -?(0[xX][1-9a-fA-F][0-9a-fA-F]{0,7})
@@ -44,7 +49,13 @@ ERROR_MULTILINE_COMMENT {MULTILINE_COMMENT}({C4}{C2}*|({C1}*{C3})|{C3})*"*/"
 struct { yylval = createLeaf("STRUCT"); return STRUCT; }
 if { yylval = createLeaf("IF"); return IF; }
 else { yylval = createLeaf("ELSE"); return ELSE; }
-while { yylval = createLeaf("WHILE"); loop_flag++; return WHILE; }
+while { 
+	yylval = createLeaf("WHILE"); 
+	char LABEL[16]; memset(LABEL, 0, sizeof(LABEL));
+	sprintf(LABEL, "label_%d", label_idx++);
+	TAC_Label(spl_instruction+instruction_cnt, LABEL); whileStart[loop_flag++] = instruction_cnt++; 
+	return WHILE; 
+}
 for { yylval = createLeaf("FOR"); loop_flag++; return FOR; }
 break { yylval = createLeaf("BREAK"); return BREAK; }
 return { yylval = createLeaf("RETURN"); return RETURN; }

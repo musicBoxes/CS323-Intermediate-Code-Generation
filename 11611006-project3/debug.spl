@@ -1,21 +1,10 @@
-int c(int n, int m, int j, int k){
-	write(n);
-	write(n+m);
-	write(n+m+j+k);
-	return 0;
-}
-int d(int n){
-	return d(n) * 0;
-	return d(n);
-}
-int e(){
-	return e();
-	return e() * 0;
-}
 int main(){
-	int b = read();
-	b = 2;
-	b = b + 2 * b + b / 2;
-	b = b * c(b-1, 2, -3, 4);
+	int n = 0;
+	int m = 0;
+	while (n < 2)
+	{
+		m = m * 2;
+		n = n + 1;
+	}
 	return 0;
 }

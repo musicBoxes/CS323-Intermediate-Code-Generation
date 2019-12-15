@@ -7,9 +7,10 @@ RETURN dyj2
 FUNCTION main :
 DEC op 8
 dyj3 := &op + #4
-dyj3 := #1
+dyj10 := #8 / #8
+*dyj3 := #1
 dyj4 := &op + #0
-dyj4 := #2
+*dyj4 := #2
 ARG &op
 dyj := CALL add
 n := dyj

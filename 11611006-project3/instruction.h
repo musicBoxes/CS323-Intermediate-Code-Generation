@@ -15,7 +15,12 @@ void printTAC(TAC *tac){
 }
 
 void optimizeTAC(TAC *tac, int inst_cnt){
-	
+	for (int i = 0 ; i < inst_cnt-1 ; i ++){
+		// merge label
+		if (!strcmp(tac[i].seg[0], "LABEL") && !strcmp(tac[i+1].seg[0], "LABEL")){
+			
+		}
+	}
 }
 
 // LABEL x : | define a label x

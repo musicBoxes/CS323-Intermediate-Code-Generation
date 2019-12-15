@@ -20,6 +20,7 @@
 	int inter_idx = 0;
 	int label_idx = 0;
 	TAC spl_instruction[1024];
+	int whileStart[1024];
 	int instruction_cnt = 0;
 	const char *interVar = "dyj";
 	
@@ -284,17 +285,23 @@ Stmt: Exp SEMI {
 			backPatch($7->inst, $11->inst);
 		}
 	}
-    | WHILE LP Exp RP L Stmt L { 
+    | WHILE LP Exp RP L Stmt G L { 
 		childNum = 5; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$3; childNodeList[3]=$4; childNodeList[4]=$5; $$=createNode(childNum, childNodeList, "Stmt", @$.first_line); 
-		loop_flag--;
 		Type *typePtr = getExpTypePtr($3, @3.first_line);
 		if (!(typePtr->category == PRIMITIVE && typePtr->primitive == INT)){
 			error_flag = 1;
 			printf("Semantic Error at line %d: Use non-int type variable as condition.\n", @3.first_line);
 		}
 		else{
+			/*
+			backPatchList($4->trueList, $6->inst);
+			backPatchList($4->falseList, $9->inst);
+			backPatch($8->inst, $2->inst);
+			*/
+			
 			backPatchList($3->trueList, $5->inst);
-			backPatchList($3->falseList, $7->inst);
+			backPatchList($3->falseList, $8->inst);
+			backPatch($7->inst, whileStart[--loop_flag]);
 		}
 	}
 //	| Exp error { printf("Error type B at Line %d: Exp error\n", @$.first_line); error_flag = 1; }
@@ -385,7 +392,14 @@ Exp: Exp ASSIGN Exp {
 				printf("Error type 6 at Line %d: rvalue on the left side of assignment operator\n", @1.first_line);
 			}
 		}
-		TAC_Assign(spl_instruction+instruction_cnt, $1->expVal, $3->expVal); instruction_cnt ++;
+		if ($1->isAddr){
+			char expVal[16]; memset(expVal, 0, sizeof(expVal));
+			expVal[0] = '*'; strcpy(expVal+1, $1->expVal);
+			TAC_Assign(spl_instruction+instruction_cnt, expVal, $3->expVal); instruction_cnt ++;
+		}
+		else{
+			TAC_Assign(spl_instruction+instruction_cnt, $1->expVal, $3->expVal); instruction_cnt ++;
+		}
 	}
     | Exp AND L Exp { 
 		childNum = 3; childNodeList[0]=$1; childNodeList[1]=$2; childNodeList[2]=$4; $$=createNode(childNum, childNodeList, "Exp", @$.first_line); 
@@ -601,6 +615,7 @@ Exp: Exp ASSIGN Exp {
 			sprintf(constNum, "#%d", offset);
 			TAC_Add(spl_instruction+instruction_cnt, tmpVar, $1->expVal, constNum); instruction_cnt ++;
 			strcpy($$->expVal, tmpVar);
+			$$->isAddr = 1;
 		}
 	}
     | ID { 
@@ -615,8 +630,8 @@ Exp: Exp ASSIGN Exp {
 				strcpy($$->expVal, $1->value+4);
 			}
 			else { // for other type, return its pointer
-				$$->expVal[0] = '&';
-				strcpy($$->expVal+1, $1->value+4);
+				$$->expVal[0] = '&'; strcpy($$->expVal+1, $1->value+4);
+				//strcpy($$->expVal, $1->value+4); $$->isAddr = 1;
 			}
 		}
 	}
@@ -880,7 +895,7 @@ Type* getExpTypePtr(struct treeNode* node, int lineno){
 				//char *res = TypeToString(func->type);
 				//printf("function return type: %s\n", res);
 				if (func != NULL) {
-					return func->type != NULL ? func->type : &IGNORE_TYPE ; // return itself, may have some bugs during sematic analysis
+					return func->type != NULL ? func->type : &IGNORE_TYPE ; // return itself, may have some bugs during semantic analysis
 				}
 				else return &IGNORE_TYPE;
 			}
@@ -922,7 +937,7 @@ Type* getExpTypePtr(struct treeNode* node, int lineno){
 			if (!strcmp(node->child[1]->value, "LP") && !strcmp(node->child[3]->value, "RP")){
 				FieldList *func = list_findByName(funcList, node->child[0]->value+4); // "ID: "
 				if (func != NULL) {
-					return func->type != NULL ? func->type : &IGNORE_TYPE ; // return itself, may have some bugs during sematic analysis
+					return func->type != NULL ? func->type : &IGNORE_TYPE ; // return itself, may have some bugs during semantic analysis
 				}
 				else return &IGNORE_TYPE;
 			}
